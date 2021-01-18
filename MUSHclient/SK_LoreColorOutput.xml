@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_LoreColorOutput"
+   author="Aello"
+   id="11111111111111111AA1111B"
+   language="Lua"
+   purpose="Picks up lore"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Captures Identify Info
+
+Output identify info upon command
+]]>
+</description>
+
+</plugin>
+
+<!--  Triggers  -->
+
+
+<aliases>
+  <alias
+   match="^lore ([0-9a-zA-Z\.]+)$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>Send ("lore " .. "%1")
+DoAfterSpecial(1, "loreScan", sendto.execute)
+</send>
+  </alias>
+  
+  <alias
+   match="^loreScan$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>local line, total_lines
+foundLore = false
+foundLoreIdentify = false
+total_lines = GetLinesInBufferCount ()
+compiledLore = ""
+compiledLoreIdentify = ""
+for line = total_lines - 30, total_lines do
+   currentLine = GetLineInfo(line, 1)
+   if currentLine == "" then
+      foundLore = false
+      foundLoreIdentify = false
+   end
+   if string.sub(currentLine, 1, 8) == "This is " then
+      foundLoreIdentify = currentLine
+      compiledLoreIdentify = ""
+   end
+   if foundLore then 	
+      t = GetStyleInfo (line)
+      for k, v in pairs (t) do 
+	     if rtrim(v.text) ~= "" then
+	        if compiledLore ~= "" then
+	           compiledLore = compiledLore .. getSKColor(v.textcolour)  .. v.text
+            else
+               compiledLore = getSKColor(v.textcolour)  .. v.text
+            end
+         end
+      end
+      compiledLore = compiledLore .. " "
+   end
+   if foundLoreIdentify then
+      t = GetStyleInfo (line)
+      for k, v in pairs (t) do
+         if rtrim(v.text) ~= "" then  
+            if compiledLoreIdentify ~= "" then
+               compiledLoreIdentify = compiledLoreIdentify .. getSKColor(v.textcolour)  .. v.text
+            else
+               compiledLoreIdentify = getSKColor(v.textcolour)  .. v.text
+            end
+         end
+      end
+      compiledLoreIdentify = compiledLoreIdentify .. " "
+   end
+   if currentLine:find("^lore [a-zA-Z\.0-9]+$") then
+      foundLore = true
+      compiledLore = ""
+   end
+end
+Note(compiledLore)
+if compiledLore ~= compiledLoreIdentify then
+   Note("")
+   Note(compiledLoreIdentify .. " ")
+end
+SetVariable("loredItem", compiledLore)
+SetVariable("loredItemIdentify", compiledLoreIdentify)
+</send>
+  </alias>
+  
+  <alias
+   match="^lrn$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>loredItem = GetVariable("loredItem") or ""
+outputArray = {}
+outputArray[1] = ""
+if loredItem ~= "" then
+   arrayIndex = 1
+   for i in string.gmatch(loredItem, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+         if (string.len (outputArray[arrayIndex]) + string.len (trimString .. ".  ")) &lt; 500 then
+            outputArray[arrayIndex] = outputArray[arrayIndex] .. trimString .. ".  "
+         else
+		    arrayIndex = arrayIndex + 1
+            outputArray[arrayIndex] = trimString .. ".  "
+         end
+      end 
+   end
+   lastColor = ""
+   for outputCount = 1, #outputArray do 
+      Note (lastColor .. rtrim(outputArray[outputCount]))
+	  lastColor = ""
+	  for w in string.gmatch(outputArray[outputCount], "\$[0-9]\$?") do
+	     lastColor = w
+	  end
+      if string.sub(lastColor, -1) == "$" then
+         lastColor = lastColor .. "I"
+      end
+   end
+end
+</send>
+  </alias>
+  <alias
+   match="^lro$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>loredItem = GetVariable("loredItem") or ""
+outputArray = {}
+outputArray[1] = ""
+if loredItem ~= "" then
+   arrayIndex = 1
+   for i in string.gmatch(loredItem, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+         if (string.len (outputArray[arrayIndex]) + string.len (trimString .. ".  ")) &lt; 500 then
+            outputArray[arrayIndex] = outputArray[arrayIndex] .. trimString .. ".  "
+         else
+		    arrayIndex = arrayIndex + 1
+            outputArray[arrayIndex] = trimString .. ".  "
+         end
+      end 
+   end
+   lastColor = ""
+   for outputCount = 1, #outputArray do	  
+      Send ("'" .. lastColor .. rtrim(outputArray[outputCount]))
+	  lastColor = ""
+	  for w in string.gmatch(outputArray[outputCount], "\$[0-9]\$?") do
+	     lastColor = w
+	  end
+      if string.sub(lastColor, -1) == "$" then
+         lastColor = lastColor .. "I"
+      end
+   end
+end</send>
+  </alias>
+    <alias
+   match="^lrn2$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>loredItemIdentify = GetVariable("loredItemIdentify") or ""
+outputArray = {}
+outputArray[1] = ""
+
+if loredItemIdentify ~= "" then
+   arrayIndex = 1
+   for i in string.gmatch(loredItemIdentify, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+        if (string.len (outputArray[arrayIndex]) + string.len (trimString .. ".  ")) &lt; 500 then
+          outputArray[arrayIndex] = outputArray[arrayIndex] .. trimString .. ".  "
+        else
+		  arrayIndex = arrayIndex + 1
+          outputArray[arrayIndex] = trimString .. ".  "
+        end
+      end 
+   end
+   lastColor = ""
+   for outputCount = 1, #outputArray do 
+      Note(lastColor .. rtrim(outputArray[outputCount]))
+	  lastColor = ""
+	  for w in string.gmatch(outputArray[outputCount], "\$[0-9]\$?") do
+	     lastColor = w
+	  end
+      if string.sub(lastColor, -1) == "$" then
+         lastColor = lastColor .. "I"
+      end
+   end
+end
+</send>
+  </alias>
+  <alias
+   match="^lro2$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>loredItemIdentify = GetVariable("loredItemIdentify") or ""
+outputArray = {}
+outputArray[1] = ""
+
+if loredItemIdentify ~= "" then
+   arrayIndex = 1
+   for i in string.gmatch(loredItemIdentify, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+        if (string.len (outputArray[arrayIndex]) + string.len (trimString .. ".  ")) &lt; 500 then
+          outputArray[arrayIndex] = outputArray[arrayIndex] .. trimString .. ".  "
+        else
+		  arrayIndex = arrayIndex + 1
+          outputArray[arrayIndex] = trimString .. ".  "
+        end
+      end 
+   end 
+   lastColor = ""
+   for outputCount = 1, #outputArray do 
+      Send ("'" .. lastColor .. rtrim(outputArray[outputCount]))
+	  lastColor = ""
+	  for w in string.gmatch(outputArray[outputCount], "\$[0-9]\$?") do
+	     lastColor = w
+	  end
+      if string.sub(lastColor, -1) == "$" then
+         lastColor = lastColor .. "I"
+      end
+   end
+end
+  </send>
+  </alias>
+    <alias
+   match="^lran$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>loredItem = GetVariable("loredItem") or ""
+loredItemIdentify = GetVariable("loredItemIdentify") or ""
+
+Execute("lrn")
+if loredItem ~= loredItemIdentify then
+   Note("")
+   Execute("lrn2")
+end
+</send>
+  </alias>
+  <alias
+   match="^lrao$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>loredItem = GetVariable("loredItem") or ""
+loredItemIdentify = GetVariable("loredItemIdentify") or ""
+Execute("lro")
+if loredItem ~= loredItemIdentify then
+   Execute("lro2")
+end
+  </send>
+  </alias>
+</aliases>
+<script>
+<![CDATA[
+
+function getSKColor(colorCode)
+   color = ""
+   if colorCode == 12632256 then
+     color = "$7"
+   elseif colorCode == 16748574 then 
+     color = "$1$I"
+   elseif colorCode == 14772545 then 
+     color = "$1"
+   elseif colorCode == 8421376 then 
+     color = "$3"
+   elseif colorCode == 8388736 then 
+     color = "$5"
+   elseif colorCode == 16776960 then 
+     color = "$3$I"
+   elseif colorCode == 255 then 
+     color = "$4$I"
+   elseif colorCode == 8421504 then 
+     color = "$0$I"
+   elseif colorCode == 16777215 then 
+     color = "$7$I"
+   elseif colorCode == 32768 then 
+     color = "$2"
+   elseif colorCode == 65535 then 
+     color = "$6$I"
+   elseif colorCode == 65280 then 
+     color = "$2$I"
+   elseif colorCode == 16711935 then 
+     color = "$5$I"
+   elseif colorCode == 32896 then 
+     color = "$6"
+   elseif colorCode == 128 then
+     color = "$4"
+   else 
+     color = "$A"
+   end
+   return color
+end
+
+function rtrim(s)
+  local n = #s
+  while n > 0 and s:find("^%s", n) do n = n - 1 end
+  return s:sub(1, n)
+end
+
+]]>
+</script>
+
+
+</muclient>

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_IdentifyColorOutput"
+   author="Aello"
+   id="1111111111111B11111C111B"
+   language="Lua"
+   purpose="Reads identified descriptions and outputs it through say"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Captures Identify Info
+
+Output identify info upon command
+]]>
+</description>
+
+</plugin>
+
+<!--  Triggers  -->
+
+<triggers>
+  <trigger
+   enabled="y"
+   match="^You utter the words\, \'uoculoihuyl\'\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>SetVariable("identifiedItem", "")
+  SetVariable("identifiedEnd", "false")
+  </send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="IdentifyOutput"
+   match="You utter the words\, \'uoculoihuyl\'\."
+   multi_line="y"
+   lines_to_match="15"
+   regexp="y"
+   script="colorOutput"
+   sequence="200"
+  >
+  </trigger>
+</triggers>
+<aliases>
+  <alias
+   match="^idn$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>function rtrim(s)
+  local n = #s
+  while n &gt; 0 and s:find("^%s", n) do n = n - 1 end
+  return s:sub(1, n)
+end
+
+outputArray = {}
+outputArray[1] = ""
+longestParse = GetVariable("identifiedItem") or ""
+
+if longestParse ~= "" then
+   arrayIndex = 1
+   splitString = string.gsub(longestParse, "vs.", "vs")
+   for i in string.gmatch(splitString, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+        if (string.len (outputArray[arrayIndex]) + string.len (trimString .. ".  ")) &lt; 500 then
+          outputArray[arrayIndex] = outputArray[arrayIndex] .. trimString .. ".  "
+        else
+		  arrayIndex = arrayIndex + 1
+          outputArray[arrayIndex] = trimString .. ".  "
+        end
+      end 
+   end
+   lastColor = ""
+   for outputCount = 1, #outputArray do 
+      Note (lastColor .. rtrim(outputArray[outputCount]))
+	  lastColor = ""
+	  for w in string.gmatch(outputArray[outputCount], "\$[0-9]\$?") do
+	     lastColor = w
+	  end
+	  if string.sub(lastColor, -1) == "$" then
+         lastColor = lastColor .. "I"
+      end
+   end
+end</send>
+  </alias>
+  <alias
+   match="^ido$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>function rtrim(s)
+  local n = #s
+  while n &gt; 0 and s:find("^%s", n) do n = n - 1 end
+  return s:sub(1, n)
+end
+
+outputArray = {}
+outputArray[1] = ""
+longestParse = GetVariable("identifiedItem") or ""
+
+if longestParse ~= "" then
+   arrayIndex = 1
+   splitString = string.gsub(longestParse, "vs.", "vs")
+   for i in string.gmatch(splitString, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+        if (string.len (outputArray[arrayIndex]) + string.len (trimString .. ".  ")) &lt; 500 then
+          outputArray[arrayIndex] = outputArray[arrayIndex] .. trimString .. ".  "
+        else
+		  arrayIndex = arrayIndex + 1
+          outputArray[arrayIndex] = trimString .. ".  "
+        end
+      end 
+   end
+   lastColor = ""
+   for outputCount = 1, #outputArray do 
+      Send ("'" .. lastColor .. rtrim(outputArray[outputCount]))
+	  lastColor = ""
+	  for w in string.gmatch(outputArray[outputCount], "\$[0-9]\$?") do
+	     lastColor = w
+	  end
+	  if string.sub(lastColor, -1) == "$" then
+         lastColor = lastColor .. "I"
+      end
+   end
+end</send>
+  </alias>
+  
+<alias
+   match="^id1$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+id1 = GetVariable("id1", clipboardIdentify) or ""
+SetClipboard(id1)
+Note("HTML Item Name Copied to Clipboard")
+</send>
+  </alias>
+  
+
+<alias
+   match="^id2$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+id2 = GetVariable("id2", clipboardIdentify) or ""
+SetClipboard(id2)
+Note("HTML Identify Copied to Clipboard")
+</send>
+  </alias>
+  
+</aliases>
+
+<script>
+<![CDATA[
+compiledStyles = {}
+clipboardItem = ""
+clipboardIdentify = ""
+
+
+function chatRedirect (styles)
+  require "serialize"
+  check(CallPlugin ("10778718503f0c91106745f5", "display", serialize.save_simple (styles)))
+end
+
+function getSKColor(colorCode)
+   color = ""
+   if colorCode == 12632256 then
+     color = "$7"
+   elseif colorCode == 16748574 then 
+     color = "$1$I"
+   elseif colorCode == 14772545 then 
+     color = "$1"
+   elseif colorCode == 8421376 then 
+     color = "$3"
+   elseif colorCode == 8388736 then 
+     color = "$5"
+   elseif colorCode == 16776960 then 
+     color = "$3$I"
+   elseif colorCode == 255 then 
+     color = "$4$I"
+   elseif colorCode == 8421504 then 
+     color = "$0$I"
+   elseif colorCode == 16777215 then 
+     color = "$7$I"
+   elseif colorCode == 32768 then 
+     color = "$2"
+   elseif colorCode == 65535 then 
+     color = "$6$I"
+   elseif colorCode == 65280 then 
+     color = "$2$I"
+   elseif colorCode == 16711935 then 
+     color = "$5$I"
+   elseif colorCode == 32896 then 
+     color = "$6"
+   elseif colorCode == 128 then
+     color = "$4"
+   else 
+     color = "$A"
+   end
+   return color
+end
+
+function rgb_to_hex(col)
+    local b, g, r = string.match(string.format("%06x", col), "([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])")
+    return "#"..r..g..b
+end
+
+function colorOutput (name, line, wildcards, styles)
+	titleLine = false
+	titleLineCompiled = ""
+
+	local json = require("json")
+    identifiedEnd = GetVariable("identifiedEnd") or false
+	compiledIdentify = GetVariable("identifiedItem") or ""
+	
+	htmlHeader = '<table border=0 cellpadding=5 bgcolor="#000000"><tr><td><pre><code><font size=2 face="FixedSys, Lucida Console, Courier New, Courier">'
+	htmlFooter = '</font></code></pre></td></tr></table>'
+	
+	
+	if line == "" or string.find(line, "^\> ") or string.find(line, "^%[HP:") then
+	   identifiedEnd = true
+	   SetVariable("identifiedEnd", "true")
+	end
+	
+	if identifiedEnd == "false" then 
+       for _, v in ipairs (styles) do
+	   --This is ---a vest made from the skin of a hellfire wyrm-----, a small dragonscale
+	      if v.text == "" or string.find(v.text, "^\> ") or string.find(v.text, "^%[HP:") then
+	         endLine = true
+	      end 
+		  
+		  if string.find(v.text, ",") and titleLine == true then
+				titleLine = false
+				titleTemp = ""
+				if not string.find(v.text, "^,")  then
+					titleTemp = string.sub(v.text, 1, string.find(v.text, ",") - 1)
+					titleLineCompiled = titleLineCompiled .. '<font color="' .. rgb_to_hex(v.textcolour) .. '">' .. titleTemp .. '</font>'
+				end
+					
+				SetVariable("id1", htmlHeader .. titleLineCompiled .. htmlFooter)
+		  end
+		  
+		  titleTemp = ""
+		  if string.find(v.text, "^This is ") then
+				titleLine = true
+				titleTemp = string.gsub(v.text, "^This is ", "")
+				if string.find(titleTemp, ",")  then
+					titleTemp = string.sub(titleTemp, 1, string.find(titleTemp, ",") - 1)
+					titleLineCompiled = titleLineCompiled .. '<font color="' .. rgb_to_hex(v.textcolour) .. '">' .. titleTemp .. '</font>'
+					SetVariable("id1", htmlHeader .. titleLineCompiled .. htmlFooter)
+					titleLine = false
+				else
+					titleLineCompiled = titleLineCompiled .. '<font color="' .. rgb_to_hex(v.textcolour) .. '">' .. titleTemp .. '</font>'
+				end 
+		  else
+			  titleLineCompiled = titleLineCompiled .. '<font color="' .. rgb_to_hex(v.textcolour) .. '">' .. v.text .. '</font>'
+		  end
+	      if not endLine then
+			compiledIdentify = compiledIdentify .. getSKColor(v.textcolour)
+			compiledIdentify = compiledIdentify .. v.text
+          end
+			clipboardIdentify = clipboardIdentify .. '<font color="' .. rgb_to_hex(v.textcolour) .. '">' .. v.text .. '</font>'
+	   end
+	   
+	   
+	   clipboardIdentify = clipboardIdentify .. "<br/>"
+	chatRedirect(styles)
+	end
+	
+	if identifiedEnd == true then
+		if clipboardIdentify ~= "" then 
+			clipboardIdentify = htmlHeader .. clipboardIdentify .. htmlFooter
+			SetVariable("id2", clipboardIdentify)
+		end
+
+		compiledStyles = {}
+		clipboardIdentify = ""
+	end
+	SetVariable("identifiedItem", compiledIdentify .. " ")
+	titleLine = false
+end
+
+]]>
+</script>
+
+
+</muclient>

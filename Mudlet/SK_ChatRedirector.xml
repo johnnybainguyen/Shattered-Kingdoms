@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MudletPackage>
+<MudletPackage version="1.0">
+	<TriggerPackage>
+		<Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+			<name>Load Chat Redirector on Connect</name>
+			<script>
+loadChatRedirector()
+</script>
+			<triggerType>0</triggerType>
+			<conditonLineDelta>0</conditonLineDelta>
+			<mStayOpen>0</mStayOpen>
+			<mCommand></mCommand>
+			<packageName></packageName>
+			<regexCodeList>
+				<string>^(Welcome to Shattered Kingdoms.|Reconnecting.)$</string>
+			</regexCodeList>
+			<regexCodePropertyList>
+				<integer>1</integer>
+			</regexCodePropertyList>
+		</Trigger>
+		<Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+			<name>Say Capture</name>
+			<script>
+selectCurrentLine()
+chatEMCO:append("Say")
+deselect()
+resetFormat()
+	
+</script>
+			<triggerType>0</triggerType>
+			<conditonLineDelta>0</conditonLineDelta>
+			<mStayOpen>0</mStayOpen>
+			<mCommand></mCommand>
+			<packageName></packageName>
+			<regexCodeList>
+				<string>^(\> )*[A-Za-z\s]+ (say|yell|exclaim|ask|says|yells|exclaims|asks) (to |the )*([A-Za-z\s]+)*\'(.*?)\'$</string>
+			</regexCodeList>
+			<regexCodePropertyList>
+				<integer>1</integer>
+			</regexCodePropertyList>
+		</Trigger>
+		<Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+			<name>Tell Capture</name>
+			<script>
+selectCurrentLine()
+chatEMCO:append("Tell")
+deselect()
+resetFormat()</script>
+			<triggerType>0</triggerType>
+			<conditonLineDelta>0</conditonLineDelta>
+			<mStayOpen>0</mStayOpen>
+			<mCommand></mCommand>
+			<packageName></packageName>
+			<regexCodeList>
+				<string>^(\> )*[A-Za-z\s]+ (tell|reply|tells|replies) (to |the )*([A-Za-z\s]+ )*\'(.*?)\'$</string>
+			</regexCodeList>
+			<regexCodePropertyList>
+				<integer>1</integer>
+			</regexCodePropertyList>
+		</Trigger>
+		<Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+			<name>Tribunal Capture</name>
+			<script>
+selectCurrentLine()
+chatEMCO:append("Tribunal")
+deselect()
+resetFormat()</script>
+			<triggerType>0</triggerType>
+			<conditonLineDelta>0</conditonLineDelta>
+			<mStayOpen>0</mStayOpen>
+			<mCommand></mCommand>
+			<packageName></packageName>
+			<regexCodeList>
+				<string>^(\> )*\[(TALON|KEEPER|LEGION|HAND|ALLIANCE)+\] [A-Za-z]+: (.*?)$</string>
+			</regexCodeList>
+			<regexCodePropertyList>
+				<integer>1</integer>
+			</regexCodePropertyList>
+		</Trigger>
+		<Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+			<name>Cabal Capture</name>
+			<script>
+selectCurrentLine()
+chatEMCO:append("Cabal")
+deselect()
+resetFormat()</script>
+			<triggerType>0</triggerType>
+			<conditonLineDelta>0</conditonLineDelta>
+			<mStayOpen>0</mStayOpen>
+			<mCommand></mCommand>
+			<packageName></packageName>
+			<regexCodeList>
+				<string>^(\> )*\[(DRUID|FIST|HAMMER|HARLEQUIN|MIDNIGHT|CRUCIBLE)+\] [A-Za-z]+: (.*?)$</string>
+			</regexCodeList>
+			<regexCodePropertyList>
+				<integer>1</integer>
+			</regexCodePropertyList>
+		</Trigger>
+	</TriggerPackage>
+	<ScriptPackage>
+		<Script isActive="yes" isFolder="no">
+			<name>loadChatRedirector</name>
+			<packageName></packageName>
+			<script>function loadChatRedirectorEvent(event, arg, profile)
+  if event == "sysInstallPackage" and arg == "SK_ChatRedirector" then
+    loadChatRedirector()
+  end
+
+end
+registerAnonymousEventHandler("sysConnectionEvent", "loadChatRedirectorEvent")
+registerAnonymousEventHandler("sysInstallPackage", "loadChatRedirectorEvent")
+
+function loadChatRedirector()
+  chatContainer = chatContainer or Adjustable.Container:new({
+    x = "-25%",
+    y = "0",
+    width = "25%",
+    height = "100%",
+    buttonFontSize = 0,
+    buttonsize = 0
+  })
+  chatContainer:setTitle("")
+  local stylesheet = [[background-color: rgb(0,180,0,255); border-width: 1px; border-style: solid; border-color: gold; border-radius: 10px;]]
+  local istylesheet = [[background-color: rgb(60,60,60,255); border-width: 1px; border-style: solid; border-color: gold; border-radius: 10px;]]
+  chatEMCO = chatEMCO or EMCO:new({
+    x = "0",
+    y = "0",
+    width = "100%",
+    height = "100%",
+    allTab = true,
+    allTabName = "All",
+    gap = 2,
+    consoleColor = "black",
+    consoles = {
+    "All",
+    "Say", 
+    "Tell",
+    "Tribunal",
+    "Cabal",
+    "Combat",
+    },
+    mapTabName = "Map",
+    mapTab = false,
+    timestamp = true,
+    timestampFormat = "HH:mm:ss",
+    customTimestampColor = true,
+    timestampFGColor = "cyan",
+    timestampBGColor = "black",
+    blink = true,
+    blinkFromAll = false,
+    activeTabCSS = stylesheet,
+    inactiveTabCSS = istylesheet,
+  }, chatContainer)
+end
+
+--chatEMCO:setFontSize(12)
+</script>
+			<eventHandlerList />
+		</Script>
+	</ScriptPackage>
+    <AliasPackage>
+        <Alias isActive="yes" isFolder="no">
+            <name>EMCOCustom</name>
+            <script>
+			chatEMCO.setFontSize(15)
+			echo("hi")
+</script>
+            <command></command>
+            <regex>^emcoCustom$</regex>
+        </Alias>
+    </AliasPackage>
+</MudletPackage>

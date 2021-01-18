@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MudletPackage>
+<MudletPackage version="1.001">
+	<TriggerPackage>
+		<Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+			<name>Highlights Combat Text</name>
+			<script>
+
+backgroundColor = "#000000" -- black
+highlightNormal = "#C0C0C0" -- silver
+highlightCombat = "#00FF00" -- green
+highlightColor1 = "#00FFFF" -- cyan
+highlightColor2 = "#FF6347" -- tomato red
+highlightColor3 = "#98ff98" -- mint green
+highlightColor4 = "#EE82EE" -- violet
+highlightColor5 = "#FF00FF" -- magenta
+highlightColor6 = "#A52A2A" -- brown
+
+tagStart = highlightColor1 .. "~&gt;~&gt;~&gt;~&gt; "
+tagEnd = highlightColor1 .. "~&lt;~&lt;~&lt;~&lt;" 
+
+function echoEditor(hc, bgc)
+	selectCurrentLine()
+	r,g,b = Geyser.Color.parse(hc)
+	setFgColor(r,g,b)
+	resetFormat()
+end
+
+function notifyHighlight(command, person, personTarget)
+	outputHecho = ""
+	if personTarget and person then
+		outputHecho = tagStart .. highlightColor3 .. person .. " " .. highlightColor2 .. command ..  " " .. highlightColor4 .. personTarget .. " " .. tagEnd .. "\n"
+	elseif person then
+		outputHecho = tagStart .. highlightColor3 .. person .. " " .. highlightColor2 .. command ..  " " .. tagEnd .. "\n"
+	else
+		outputHecho = tagStart .. highlightColor2 .. command ..  " " .. tagEnd .. "\n"
+	end
+	hecho("\n" .. outputHecho)
+	if chatEMCO then
+		chatEMCO:hecho("Combat", outputHecho)
+	end
+end
+
+function highlightDirection(input)
+	selectCurrentLine()
+	deleteLine()
+	direction = string.match(input, "northeast") or string.match(input, "southeast") or string.match(input, "southwest") or string.match(input, "northwest") or string.match(input, "north") or string.match(input, "south") or string.match(input, "east") or string.match(input, "west") or string.match(input, "up") or string.match(input, "down") 
+	
+	distance = "0"
+	if string.find(input, "nearby") then
+		distance = "1"
+	elseif string.find(input, "not too far off") then
+		distance = "2"
+	elseif string.find(input, "fairly far") then
+		distance = "3"
+	elseif string.find(input, "a long ways off") then
+		distance = "4"
+	end
+
+	generatedOutput = string.gsub(input, direction, "&lt;0,255,255:0,0,0&gt;" .. direction .. " " .. distance .. "&lt;r&gt;")
+	if target ~= nil and target ~= "" then
+		targetName = string.upper(string.sub(target, 1, 1)) .. string.lower(string.sub(target, 2))
+		targetDesc = string.lower(target)
+		generatedOutput = string.gsub(generatedOutput, targetName, "&lt;255,0,0:0,0,0&gt;" .. targetName .. "&lt;r&gt;")
+		generatedOutput = string.gsub(generatedOutput, targetDesc, "&lt;255,0,0:0,0,0&gt;" .. targetDesc .. "&lt;r&gt;")
+	end
+
+	echo("\n")
+	decho(generatedOutput)
+end
+
+incantations = {
+["aque bragh"] = "acid blast",
+["aiuwahz oculoae"] = "animate dead",
+["abrazak"] = "armor",
+["babbrz"] = "babble",
+["barh ay ohifl"] = "bolt of glory",
+["fido"] = "bless",
+["noselacri"] = "blindness",
+["bcandusahp ay ruyz"] = "breath of life",
+["mosailla paieg"] = "burning hands",
+["qarr abrazak"] = "call armor",
+["qarr diesilla"] = "call lightning",
+["qaiqzrrann"] = "cancellation",
+["qkadagz qfuhuqar"] = "cause critical",
+["qkadagz dies"] = "cause light",
+["qkadagz gzfuajg"] = "cause serious",
+["qpaui diesilla"] = "chain lightning",
+["qpaiozghayy"] = "changestaff",
+["qpaioz gzn"] = "change sex",
+["qpabraw dudasabru"] = "charm person",
+["qpurr hajqp"] = "chill touch",
+["qahif gsgrul"] = "color spray",
+["qaiz ay qare"] = "cone of cold",
+["qaiyjguai"] = "confusion",
+["qaiyjcandus zrzwunsohar"] = "conjure elemental",
+["qaigzqgruhz abrazak"] = "consecrate armor",
+["qaigzqgruhz uhzw"] = "consecrate item",
+["qaigzqgruhz xzasai"] = "consecrate weapon",
+["qaihuijar dies"] = "continual light",
+["qaihfar jioculoae"] = "control undead",
+["qaihfar xzahpzf"] = "control weather",
+["qcandusahz yaae"] = "create food",
+["qcandusahz gsfuio"] = "create spring",
+["qcandusahz xahzf"] = "create water",
+["qcanduszsuio eaaw"] = "creeping doom",
+["judicandus noselacri"] = "cure blindness",
+["judicandus qfuhuqar"] = "cure critical",
+["judicandus oculoaylacri"] = "cure deafness",
+["judicandus eugzagz"] = "cure disease",
+["judicandus dies"] = "cure light",
+["judicandus sausabru"] = "cure poison",
+["judicandus gzfuajg"] = "cure serious",
+["judifgz"] = "curse",
+["oculoaylacri"] = "deafness",
+["oculoahp gpfaje"] = "death shroud",
+["oculoszculayuqann"] = "depetrification",
+["oculoinfra kadagru"] = "detect aura",
+["oculoinfra mosauze"] = "detect buried",
+["oculoinfra pueoculoi"] = "detect hidden",
+["oculoinfra uizug"] = "detect invis",
+["oculoinfra waouq"] = "detect magic",
+["oculoinfra sausabru"] = "detect poison",
+["oculozann"] = "devotion",
+["euo"] = "dig",
+["eugszr waouq"] = "dispel",
+["eugsufuh"] = "dispirit",
+["zabrahpdjatz"] = "earthquake",
+["zrzwunsohar xarr"] = "elemental wall",
+["unsoqpaih abrazak"] = "enchant armor",
+["unsoqpaih uhzw"] = "enchant item",
+["unsoqpaih xzasai"] = "enchant weapon",
+["unsozfoukzf"] = "energizer",
+["unsozfol egruui"] = "energy drain",
+["unsorabraoz"] = "enlarge",
+["unsohaiorz"] = "entangle",
+["zhpzcandusaryafw"] = "etherealform",
+["znafqugw"] = "exorcism",
+["yazfuz yucandus"] = "faerie fire",
+["yazfuz yao"] = "faerie fog",
+["yzabra"] = "fear",
+["yzagh ay yzabra"] = "feast of fear",
+["yzzbrzwuie"] = "feeblemind",
+["yuiar gculatz"] = "final strike",
+["yuiozf ay oculoahp"] = "finger of death",
+["yucandusbarr"] = "fireball",
+["yrawzgculatz"] = "flamestrike",
+["yrl"] = "fly",
+["ycandusikl"] = "frenzy",
+["oahz"] = "gate",
+["ouaih ghcandusiohp"] = "giant strength",
+["ohiaw raiqz"] = "gloom lance",
+["ocandusunso hpjwb"] = "green thumb",
+["pawwzf ay dies"] = "hammer of light",
+["pabraw"] = "harm",
+["paghz"] = "haste",
+["pzar"] = "heal",
+["pzaruio grulg"] = "healing rays",
+["pzrryucandus"] = "hellfire",
+["pzzakfpaoz"] = "hemorrhage",
+["parl glwbar"] = "holy symbol",
+["parl xafe"] = "holy word",
+["uoculoihuyl"] = "identify",
+["uiygruzuguai"] = "infravision",
+["uihzfeuqnn"] = "interdiction",
+["uizuiqubrz kadagru"] = "invincible aura",
+["uizug"] = "invis",
+["ufaiojabrae"] = "ironguard",
+["diesunso hiae"] = "lighten load",
+["diesilla barh"] = "lightning bolt",
+["hiqahz abyzqh"] = "locate object",
+["waouq wuggurz"] = "magic missile",
+["waouqar zzghwunsoh"] = "magical vestment",
+["waowa gsgrul"] = "magma spray",
+["wagg pzaruio"] = "mass healing",
+["wagg uizug"] = "mass invis",
+["wueiuoph"] = "midnight",
+["wuwuq"] = "mimic",
+["wuffaf uwaoz"] = "mirror image",
+["szculayuqann"] = "petrification",
+["spaunsoun pzabrah"] = "phoenix heart",
+["sraojz"] = "plague",
+["sausabru"] = "poison",
+["sarlzaksp"] = "polymorph",
+["sfainfrauai"] = "protection",
+["gruugz oculoae"] = "raise dead",
+["candusqpabraoz"] = "recharge",
+["candusima"] = "refresh",
+["candusounsozgrunn"] = "regeneration",
+["candussido qawsjrguai"] = "remove compulsion",
+["candussido judifgz"] = "remove curse",
+["candusgugh zrzwunsohg"] = "resist elements",
+["candusgjfcandusqnn"] = "resurrection",
+["fuyh"] = "rift",
+["gaiqhjabral"] = "sanctuary",
+["gpuzre"] = "shield",
+["gpaqtuio ogrugs"] = "shocking grasp",
+["gpfuit"] = "shrink",
+["grzzs"] = "sleep",
+["ghix"] = "slow",
+["gszabra ay yauhp"] = "spear of faith",
+["gszrr xabrae"] = "spell ward",
+["gsufuh kadagru"] = "spirit aura",
+["gsufuh earr"] = "spirit doll",
+["gsufuh pafoculo"] = "spirit horde",
+["gsufuh guoph"] = "spirit sight",
+["ghaiz gtui"] = "stone skin",
+["gjwwai"] = "summon",
+["glwbar ay saui"] = "symbol of pain",
+["hzrzsafh"] = "teleport",
+["hunsozbfuajg mosagh"] = "tenebrious burst",
+["haiojzg"] = "tongues",
+["hgruqtrzgg ghzs"] = "trackless step",
+["jwbgru waihrz"] = "umbra mantle",
+["jioculofghaie"] = "understand",
+["zawsufuq hajqp"] = "vampiric touch",
+["zuharuhl"] = "vitality",
+["zaaeaa"] = "voodoo",
+["xabras gsaqz"] = "warp space",
+["xabrasahp"] = "warpath",
+["xzatunso"] = "weaken",
+["xafe ay candusqarr"] = "word of recall",
+["eawuiann"] = "domination",
+["UNKNOWN"] = "seance",
+["UNKNOWN"] = "emperor's favor",
+["UNKNOWN"] = "scatterport",
+["UNKNOWN"] = "accelerate healing",
+["UNKNOWN"] = "distort alignment",
+["UNKNOWN"] = "insight",
+["UNKNOWN"] = "luck",
+["UNKNOWN"] = "true sight"
+}
+
+notifications = {
+["qarr diesilla"] = "call lightning",
+["oculoinfra kadagru"] = "detect aura",
+["yrawzgculatz"] = "flamestrike",
+["parl xafe"] = "holy word",
+["qpabraw dudasabru"] = "charm person",
+["qahif gsgrul"] = "color spray",
+["grzzs"] = "sleep",
+["eugszr waouq"] = "dispel",
+["qaiz ay qare"] = "cone of cold",
+["qpaui diesilla"] = "chain lightning",
+["zabrahpdjatz"] = "earthquake",
+["yucandusbarr"] = "fireball",
+["mosailla paieg"] = "burning hands",
+["qcanduszsuio eaaw"] = "creeping doom",
+["pzaruio grulg"] = "healing rays",
+["gsufuh pafoculo"] = "spirit horde",
+["yuiar gculatz"] = "final strike"
+}
+
+notificationsReverse = {}
+
+for i, v in pairs(notifications) do
+	notificationsReverse[v] = i
+end
+
+
+
+line = matches[2]
+if line == "Your pulse slows to normal." then
+	echoEditor(highlightColor1, backgroundColor)
+elseif line == "You regain your footing." then
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("YOU GOT BACK UP")
+elseif line == "There is too much chaos going on right now." then
+	echoEditor(highlightColor1, backgroundColor)
+elseif line == "Your spirit feels more settled." then
+	echoEditor(highlightColor1, backgroundColor)
+elseif line == "Your body feels less fatigued." then
+	echoEditor(highlightColor1, backgroundColor)
+elseif line == "Your skin feels soft again." then
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("STONE SKIN DOWN")
+elseif line == "You feel level-headed again." then
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("TAUNT/HECKLE WORE OFF")
+elseif line == "The ether wire phases partially out of existence. " then
+	echoEditor(highlightColor1, backgroundColor)
+elseif line == "You fight a battle of inner will." then
+	echoEditor(highlightColor1, backgroundColor)
+elseif string.find(line, "^(.*) sounds the retreat!$") then
+	person = string.match(line, "^(.*) sounds the retreat!$")
+	echoEditor(highlightColor6, backgroundColor)
+	notifyHighlight("RETREATS", person)
+elseif line == "You thunder forth a tremendous rallying cry!" then
+	echoEditor(highlightColor6, backgroundColor)
+	notifyHighlight("RALLYING CRY SUCCESSFUL")
+elseif string.find(line, "^(.*) thunders forth a tremendous rallying cry!$") then
+	person = string.match(line, "^(.*) thunders forth a tremendous rallying cry!$")
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("RALLYING CRY", person)
+elseif line == "You retain your stance." then
+	echoEditor(highlightColor1, backgroundColor)
+elseif line == "You need to regain your feet first." then
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("STILL PRONE")
+elseif line == "You regain consciousness and rise unsteadily to your feet." then
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("YOU RECOVERED FROM STUN")
+elseif line == "Your spirit companions leave you." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SPIRIT AURA DOWN")
+elseif line == "You feel less protected." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("ARMOR/PROT/RESIST ELEMENTS DOWN")
+elseif line == "Your clothing feels soft again." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("MAGICAL VESTMENT DOWN")
+elseif line == "You feel less righteous." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BLESS DOWN")
+elseif line == "Your ward dissolves." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IRONGUARD DOWN")
+elseif line == "Your skin feels soft again." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("STONE SKIN DOWN")
+elseif line == "Your rage ebbs." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("FRENZY DOWN")
+elseif line == "You slowly float to the ground." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("FLY DOWN")
+elseif line == "The bubble of airy water collapses." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("AIRY WATER DOWN")
+elseif line == "You are no longer invisible." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("INVIS DOWN")
+elseif line == "Your force shield shimmers then fades away." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SHIELD DOWN")
+elseif line == "Your spell ward dissolves." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SPELL WARD DOWN")
+elseif line == "You feel yourself slow down." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("HASTE DOWN")
+elseif line == "You feel weaker." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("GIANT STRENGTH DOWN/WEAKEN")
+elseif line == "The white aura around your body fades." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SANCTUARY DOWN")
+elseif line == "You are ready to summon another treant." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CHANGESTAFF")
+elseif line == "You feel able to conjure another elemental." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("ELEMENTAL READY")
+elseif line == "You feel your pulse slow down." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("RALLYING CRY DOWN")
+elseif line == "Yippee! It worked." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BABBLE")
+elseif line == "Better stand up first." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("STAND UP")
+elseif line == "Your elemental flickers slightly." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("ELEMENTAL ONE TICK")
+elseif line == "That group is in the thick of battle." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CANNOT STAB")
+elseif line == "Your mount is now rested and recharged." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SPIRIT STEED READY")
+elseif line == "You no longer see in the dark." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("INFRAVISION DOWN")
+elseif line == "A spirit steed glows brightly and vanishes back to the upper planes." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SPIRIT STEED DOWN")
+elseif line == "Your spirit companion flickers slightly." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SPIRIT STEED ONE TICK")
+elseif line == "Your bash misses and you fall flat on your face!" then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE PRONE (Missed Bash)")
+elseif line == "You feel unclean." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE CURSED")
+elseif line == "You are too busy defending yourself." then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CANNOT CIRCLE")
+elseif string.find(line, "^(.*) regains consciousness and rises unsteadily to [itshisher]* feet.$") then
+	person = string.match(line, "^(.*) regains consciousness and rises unsteadily to [itshisher]* feet.$")
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("RECOVERED FROM STUN", person)
+elseif string.find(line, "^(.*) starts to concentrate.$") then
+	echoEditor(highlightColor2, backgroundColor)
+elseif string.find(line, "^(.*) utters the words, (.*).$") then
+	person = string.match(line, "([a-zA-Z%s\-\']*) utters the words")
+	incantation = string.match(line, "'([a-zA-Z%s]*)'")
+	selectCurrentLine()
+	deleteLine()
+	hecho(highlightColor1 .. person .. highlightColor5 .. " utters the words, '" .. highlightColor1 .. (incantations[incantation] or incantation) .. highlightColor5 .. "'.")
+	if notifications[incantation] then
+		notifyHighlight("CASTED" .. " " .. incantations[incantation], person)
+	elseif notificationsReverse[incantation] then
+		notifyHighlight("CASTED" .. " " .. incantation, person)
+	end	
+elseif string.find(line, "^(.*) glows with mystical energy!") then
+	echoEditor(highlightColor2, backgroundColor)
+elseif string.find(line, "^(.*) regains [hisherits]* footing.$") then
+	person = string.match(line, "^(.*) regains [hisherits]* footing.$")
+	echoEditor(highlightColor1, backgroundColor)
+	notifyHighlight("GOT BACK UP", person)
+elseif string.find(line, "^You assume [an]* [neutraldefensiveaggressive]* stance.$") then
+	echoEditor(highlightColor6, backgroundColor)
+elseif string.find(line, "^You trip (.*) and [hesheit]* goes down!$") then
+	person = string.match(line, "You trip (.*) and [hesheit]* goes down!$")
+	echoEditor(highlightCombat, backgroundColor)
+	notifyHighlight("IS PRONE (Tripped)", person)
+elseif string.find(line, "^You start to [praychant]*.$") then
+	echoEditor(highlightNormal, backgroundColor, "You start to concentrate.")
+elseif string.find(line, "^(.*) starts to [praychant]*.$") then
+	echoEditor(highlightColor2, backgroundColor, string.match(line, "^(.*) starts to [praychant]*.$") .. " starts to concentrate.")
+elseif string.find(line, "^Pink flames surround (.*).$") then
+	person = string.match(line, "^Pink flames surround (.*).$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("FAERIE FIRED", person)
+elseif string.find(line, "^(.*) looks very uncomfortable.$") then
+	person = string.match(line, "^(.*) looks very uncomfortable.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CURSED", person)
+elseif string.find(line, "^You fail to disarm (.*).$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("FAILED DISARM")
+elseif string.find(line, "^(.*) weapon won't budge!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CURSED WEAPON")
+elseif string.find(line, "^(.*) is still hyper%-alert from combat.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("HYPER ALERT")
+elseif string.find(line, "^Your sly taunts cause (.*) to charge you in fury.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("TAUNT SUCCEEDED")
+elseif string.find(line, "^(.*) tries to taunt you. Maybe you should teach [himherit]* a lesson%?$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE TAUNTED")
+elseif string.find(line, "^(.*) goes crazy as (.*) begins taunting [himherit]* mercilessly.$") then
+	person = string.match(line, "^.* goes crazy as (.*) begins taunting [himherit]* mercilessly.$")
+	personTarget = string.match(line, "^(.*) goes crazy as .* begins taunting [himherit]* mercilessly.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("TAUNTED", person, personTarget)
+elseif string.find(line, "^(.*) attempts to taunt (.*), but just sounds lame.$") then
+	person = string.match(line, "^(.*) attempts to taunt .*, but just sounds lame.$")
+	personTarget = string.match(line, "^.* attempts to taunt (.*), but just sounds lame.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("FAILED TAUNT", person, personTarget)
+elseif string.find(line, "^(.*) sly taunts cause (.*) to charge [himherit]* in fury.$") then
+	person = string.match(line, "^(.*) sly taunts cause .* to charge [himherit]* in fury.$")
+	personTarget = string.match(line, "^.* sly taunts cause (.*) to charge [himherit]* in fury.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("TAUNTED", person, personTarget)
+elseif string.find(line, "^(.*) is blinded by the dirt in [hisherits]* eyes!$") then
+	person = string.match(line, "^(.*) is blinded by the dirt in .* eyes!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BLINDED BY DIRT", person)
+elseif string.find(line, "^(.*) appears to be blinded.$") then
+	person = string.match(line, "^(.*) appears to be blinded.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BLINDED BY SPELL", person)
+elseif string.find(line, "^(.*) trips you and you go down!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE PRONE (TRIPPED)")
+elseif string.find(line, "^(.*) tries to trip (.*) but ends up tripping [himselfherselfitself]*!$") then
+	person = string.match(line, "^(.*) tries to trip .* but ends up tripping [himselfherselfitself]*!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS PRONE (Missed Trip)", person)
+elseif string.find(line, "^You try to trip (.*) but end up tripping yourself!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE PRONE (Missed Trip)")
+elseif string.find(line, "^(.*)'s bash misses and [hesheit]* falls flat on [hisherits]* face.$") then
+	person = string.match(line, "^(.*)'s bash misses and [hesheit]* falls flat on [hisherits]* face.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS PRONE (Missed Bash)", person)
+elseif string.find(line, "^You evade (.*)'s bash and [hesheit]* falls flat on [hisherits]* face.$") then
+	person = string.match(line, "^You evade (.*)'s bash and [hesheit]* falls flat on [hisherits]* face.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS PRONE (Missed Bash)", person)
+elseif string.find(line, "^You slam into (.*) and send [himherit]* sprawling!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BASH SUCCEEDED")
+elseif string.find(line, "^Your methodical attack breaks down as (.*) taunts you.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE TAUNTED")
+elseif string.find(line, "^Both of [itshisher]* legs are already mangled.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SWITCH TO CIRCLE")
+elseif string.find(line, "^(.*) disarms you but you secure your weapon.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE DISARMED.  WIELD WEAPON")
+elseif string.find(line, "^You disarm (.*) and send [hisherits]+ weapon flying!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("DISARM SUCCEEDED")
+elseif string.find(line, "^(.*) slams into (.*) and sends .* sprawling!$") then
+	person = string.match(line, "^(.*) slams into .* and sends .* sprawling!$")
+	personTarget = string.match(line, "^.* slams into (.*) and sends .* sprawling!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BASHED", person, personTarget)
+elseif string.find(line, "^(.*) trips (.*) sending [himherit]* to the ground.$") then
+	person = string.match(line, "^(.*) trips .* sending [himherit]* to the ground.$")
+	personTarget = string.match(line, "^.* trips (.*) sending [himherit]* to the ground.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("TRIPPED", person, personTarget)
+elseif string.find(line, "^(.*) disarms you and sends your weapon flying!$") then
+	echoEditor(highlightColor6, backgroundColor)
+	notifyHighlight("YOU ARE DISARMED")
+elseif string.find(line, "^(.*) disarms (.*) and sends [hisherits]+ weapon flying!$") then
+	person = string.match(line, "^(.*) disarms .* and sends [hisherits]+ weapon flying!$")
+	personTarget = string.match(line, "^.* disarms (.*) and sends [hisherits]+ weapon flying!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("DISARMED", person, personTarget)
+elseif string.find(line, "^(.*) disarms (.*)!$") then
+	person = string.match(line, "^(.*) disarms .*!$")
+	personTarget = string.match(line, "^.* disarms (.*)!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("DISARMED", person, personTarget)
+elseif string.find(line, "^(.*) is standing behind your victim, blocking your attack.$") then
+	person = string.match(line, "^(.*) is standing behind your victim, blocking your attack.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS IN THE WAY. BLOCKING!", person)
+elseif string.find(line, "^You disarm (.*)!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("DISARM SUCCEEDED")
+elseif string.find(line, "^(.*) tries to disarm you, but fails.$") then
+	person = string.match(line, "^(.*) tries to disarm you, but fails.$")
+	echoEditor(highlightCombat, backgroundColor)
+	notifyHighlight("DISARM ATTEMPT WARNING", person)
+elseif string.find(line, "^.* [isare]* nearby [northeast|southwestnortheastsoutheastsouthwestnorthwestupdown]* from here.$") or string.find(line, "^.* [isare]* not too far off [northeastsouthwestnortheastsoutheastsouthwestnorthwestupdown]* from here.$") or string.find(line, "^.* [isare]* fairly far [northeastsouthwestnortheastsoutheastsouthwestnorthwestupdown]* from here.$") or string.find(line, "^.* [isare]* a long ways off [northeastsouthwestnortheastsoutheastsouthwestnorthwestupdown]* from here.$") then
+	highlightDirection(copy2decho(matches[1]))
+elseif string.find(line, "^(.*) gesticulates and suddenly (.*) is vomiting as [hisherits]* organs twist!$") then
+	person = string.match(line, "^(.*) gesticulates and suddenly .* is vomiting as [hisherits]* organs twist!$")
+	personTarget = string.match(line, "^.* gesticulates and suddenly (.*) is vomiting as [hisherits]* organs twist!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("HARMED", person, personTarget)
+elseif string.find(line, "^(.*)\'s petrification spell turns (.*) to stone!$") then
+	person = string.match(line, "^(.*)\'s petrification spell turns .* to stone!$")
+	personTarget = string.match(line, "^.*\'s petrification spell turns (.*) to stone!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("PETRIFIED", person, personTarget)
+elseif string.find(line, "^(.*) howls in agony as the magma clings to [hisherits]+ body!$") then
+	person = string.match(line, "^(.*) howls in agony as the magma clings to [hisherits]+ body!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("MAGMA CLUNG ON", person)
+elseif string.find(line, "^(.*) unleashes a torrent of magma on (.*), charring [hisheritsyour]+ flesh severely!$") then
+	person = string.match(line, "^(.*) unleashes a torrent of magma on .*, charring [hisheritsyour]+ flesh severely!$")
+	personTarget = string.match(line, "^.* unleashes a torrent of magma on (.*), charring [hisheritsyour]+ flesh severely!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("MAGMAS", person, personTarget)
+elseif string.find(line, "^(.*)'s blast of acid sprays (.*), sizzling and burning [hisheritsyour]+ skin!$") then
+	person = string.match(line, "^(.*)'s blast of acid sprays .*, sizzling and burning [hisheritsyour]+ skin!$")
+	personTarget = string.match(line, "^.*'s blast of acid sprays (.*), sizzling and burning [hisheritsyour]+ skin!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("ACID BLASTS", person, personTarget)
+elseif string.find(line, "^(.*) dodges aside but is still affected (.*)'s acid blast.$") then
+	person = string.match(line, "^.* dodges aside but is still affected (.*)'s acid blast.$")
+	personTarget = string.match(line, "^(.*) dodges aside but is still affected .*'s acid blast.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("ACID BLASTS", person, personTarget)
+elseif string.find(line, "^(.*) throws a flurry of magic missile at (.*)!$") then
+	person = string.match(line, "^(.*) throws a flurry of magic missile at .*!$")
+	personTarget = string.match(line, "^.* throws a flurry of magic missile at (.*)!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("MAGIC MISSILES", person, personTarget)
+elseif string.find(line, "^(.*) tosses [hisherits]+ glowing spear at (.*) and rejoices as it hits [himherit]+.$") then
+	person = string.match(line, "^(.*) tosses [hisherits]+ glowing spear at .* and rejoices as it hits [himherit]+.$")
+	personTarget = string.match(line, "^.* tosses [hisherits]+ glowing spear at (.*) and rejoices as it hits [himherit]+.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SPEAR OF FAITHS", person, personTarget)
+elseif string.find(line, "^(.*)'s faithful spear sails wide, but (.*) still cringes in pain.$") then
+	person = string.match(line, "^(.*)'s faithful spear sails wide, but .* still cringes in pain.$")
+	personTarget = string.match(line, "^.*'s faithful spear sails wide, but (.*) still cringes in pain.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SPEAR OF FAITHS", person, personTarget)
+elseif string.find(line, "^(.*) fires a lance of gloom at (.*) which envelopes [herhimityou]+ in shadow.$") then
+	person = string.match(line, "^(.*) fires a lance of gloom at .* which envelopes [herhimityou]+ in shadow.$")
+	personTarget = string.match(line, "^.* fires a lance of gloom at (.*) which envelopes [herhimityou]+ in shadow.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("GLOOM LANCES", person, personTarget)
+elseif string.find(line, "^(.*) drains some of (.*)'s magical energy!$") then
+	person = string.match(line, "^(.*) drains some of .*'s magical energy!$")
+	personTarget = string.match(line, "^.* drains some of (.*)'s magical energy!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("MANA DRAINS", person, personTarget)
+elseif string.find(line, "^You are blinded!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE BLINDED")
+elseif string.find(line, "^(.*) cringe[s]* in terror from (.*)'s bolt of glory!$") then
+	person = string.match(line, "^.* cringe[s]* in terror from (.*)'s bolt of glory!$")
+	personTarget = string.match(line, "^(.*) cringe[s]* in terror from .*'s bolt of glory!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BoGs", person, personTarget)
+elseif string.find(line, "^(.*) surrounded by a nimbus of holy light!$") then
+	person = string.match(line, "^(.*) surrounded by a nimbus of holy light!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("TAUNTED BY BoG", person)
+elseif string.find(line, "^(.*) bursts into a glorious flash of holy light and crumbles to dust!$") then
+	person = string.match(line, "^(.*) bursts into a glorious flash of holy light and crumbles to dust!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("INSTANTLY DIES BY BoG", person)
+elseif string.find(line, "^.* weep[s]* in pain and despair as (.*)'s bolt of glory hits [himherityou]+.$") then
+	person = string.match(line, "^.* weep[s]* in pain and despair as (.*)'s bolt of glory hits [himherityou]+.$")
+	personTarget = string.match(line, "^(.*) weep[s]* in pain and despair as .*'s bolt of glory hits [himherityou]+.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BoGs", person, personTarget)
+elseif string.find(line, "^(.*) causes bloody wounds to open in (.*)'s arms and legs!$") then
+	person = string.match(line, "^(.*) causes bloody wounds to open in .*'s arms and legs!$")
+	personTarget = string.match(line, "^.* causes bloody wounds to open in (.*)'s arms and legs!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CAUSE LIGHTS", person, personTarget)
+elseif string.find(line, "^(.*) causes large, bloody wounds to open in .*'s chest!$") then
+	person = string.match(line, "^(.*) causes large, bloody wounds to open in .*'s chest!$")
+	personTarget = string.match(line, "^.* causes large, bloody wounds to open in (.*)'s chest!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CAUSE SERIOUS", person, personTarget)
+elseif string.find(line, "^(.*) causes blood to trickle from (.*)'s eyes and ears!$") then
+	person = string.match(line, "^(.*) causes blood to trickle from .*'s eyes and ears!$")
+	personTarget = string.match(line, "^.* causes blood to trickle from (.*)'s eyes and ears!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CAUSE CRITICALS", person, personTarget)
+elseif string.find(line, "^(.*) appears to be deaf.$") then
+	person = string.match(line, "^(.*) appears to be deaf.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS DEAFENED", person)
+elseif string.find(line, "^You are deafened!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE DEAFENED")
+elseif string.find(line, "^(.*) look[s]* tired and weak.$") then
+	person = string.match(line, "^(.*) look[s]* tired and weak.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("WEAKENED", person)
+elseif string.find(line, "^(.*) looks very ill.$") then
+	person = string.match(line, "^(.*) looks very ill.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("POISONED", person)
+elseif string.find(line, "^You feel very sick.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE POISON")
+elseif string.find(line, "^You smell (.*)'s roasting flesh as (.*) burns [himherit]+ with hellfire!$") then
+	person = string.match(line, "^You smell .*'s roasting flesh as (.*) burns [himherit]+ with hellfire!$")
+	personTarget = string.match(line, "^You smell (.*)'s roasting flesh as .* burns [himherit]+ with hellfire!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("HELLFIRES", person, personTarget)
+elseif string.find(line, "^(.*) dodge[s]* aside as (.*)'s hellfire washes over [himherityou]+.$") then
+	person = string.match(line, "^.* dodge[s]* aside as (.*)'s hellfire washes over [himherityou]+.$")
+	personTarget = string.match(line, "^(.*) dodge[s]* aside as .*'s hellfire washes over [himherityou]+.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("HELLFIRES", person, personTarget)
+elseif string.find(line, "^(You) feel your flesh roast as (.*) burns you with [hisherits]+ hellfire!$") then
+	person = string.match(line, "^You feel your flesh roast as (.*) burns you with his hellfire!$")
+	personTarget = string.match(line, "^(You) feel your flesh roast as .* burns you with his hellfire!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("HELLFIRES", person, personTarget)
+elseif string.find(line, "^(.*) stagger[s]* momentarily after (.*) points [hisherits]+ finger at [himherityou]+!$") then
+	person = string.match(line, "^.* stagger[s]* momentarily after (.*) points [hisherits]+ finger at [himherityou]+!$")
+	personTarget = string.match(line, "^(.*) stagger[s]* momentarily after .* points [hisherits]+ finger at [himherityou]+!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("FoDs", person, personTarget)
+elseif string.find(line, "^(.*) begin[s]* to drool at the mouth.$") then
+	person = string.match(line, "^(.*) begin[s]* to drool at the mouth.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("FEEBLEMINDED", person)
+elseif string.find(line, "^(.*) turn[s]* blue and shivers.$") then
+	person = string.match(line, "^(.*) turn[s]* blue and shivers.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS CHILL TOUCH WEAKENED", person)
+elseif string.find(line, "^(.*) shivers but fights on as (.*) attacks with [hisherits]+ chill touch!$") then
+	person = string.match(line, "^.* shivers but fights on as (.*) attacks with [hisherits]+ chill touch!$")
+	personTarget = string.match(line, "^(.*) shivers but fights on as .* attacks with [hisherits]+ chill touch!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CHILL TOUCHES", person, personTarget)
+elseif string.find(line, "^(.*) gets a wild look in [herhisits]+ eyes.$") then
+	person = string.match(line, "^(.*) gets a wild look in [herhisits]+ eyes.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("BERSERKED/FRENZIED/FURIED", person)
+elseif string.find(line, "^(.*) whiten[s]* slightly as (.*) drains a portion of [itsherhisyour]+ life%-force!$") then
+	person = string.match(line, "^.* whiten[s]* slightly as (.*) drains a portion of [itsherhisyour]+ life%-force!$")
+	personTarget = string.match(line, "^(.*) whiten[s]* slightly as .* drains a portion of [itsherhisyour]+ life%-force!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("ENERGY DRAINS", person, personTarget)
+elseif string.find(line, "^(.*) enveloped in a mantle of deepest darkness.$") then
+	person = string.match(line, "^(.*) enveloped in a mantle of deepest darkness.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("UMBRA MANTLED", person, personTarget)
+elseif string.find(line, "^(.*) whitens as (.*) drains a large portion of its life%-force!$") then
+	person = string.match(line, "^.* whitens as (.*) drains a large portion of its life%-force!$")
+	personTarget = string.match(line, "^(.*) whitens as .* drains a large portion of its life%-force!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("ENERGY DRAINS", person, personTarget)
+elseif string.find(line, "^(.*) appears withered and pale after (.*) drains its blood.$") then
+	person = string.match(line, "^.* appears withered and pale after (.*) drains its blood.$")
+	personTarget = string.match(line, "^(.*) appears withered and pale after .* drains its blood.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("VAMPIRIC TOUCHED", person, personTarget)
+elseif string.find(line, "^(.*) screams in agony as plague sores erupt from its skin.$") then
+	person = string.match(line, "^(.*) screams in agony as plague sores erupt from its skin.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS PLAGUED", person)
+elseif string.find(line, "^(.*) fills the room with a tangible aura of fear and horror!$") then
+	person = string.match(line, "^(.*) fills the room with a tangible aura of fear and horror!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("CASTED fear", person)
+elseif string.find(line, "^You howl in agony as the magma clings to your body!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU HAVE MAGMA ON YOU")
+elseif string.find(line, "^(.*) turns ethereal.$") then
+	person = string.match(line, "^(.*) turns ethereal.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS ETHEREAL", person)
+elseif string.find(line, "^(.*) is knocked unconscious by the force of (.*)'s blow!$") then
+	person = string.match(line, "^.* is knocked unconscious by the force of (.*)'s blow!$")
+	personTarget = string.match(line, "^(.*) is knocked unconscious by the force of .*'s blow!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("KNOCKS OUT (Headbutt)", person, personTarget)
+elseif string.find(line, "^You are knocked unconscious by the force of (.*)'s blow!$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU ARE KNOCKED OUT (Headbutt)")
+elseif string.find(line, "^(.*) cries out in pain as (.*) touches [himherit]+ with his electrical hands.$") then
+	person = string.match(line, "^.* cries out in pain as (.*) touches [himherit]+ with his electrical hands.$")
+	personTarget = string.match(line, "^(.*) cries out in pain as .* touches [himherit]+ with his electrical hands.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SHOCKING GRASPS", person, personTarget)
+elseif string.find(line, "^(.*) manages to slap (.*)'s hands away before .* can electrocute it!$") then
+	person = string.match(line, "^.* manages to slap (.*)'s hands away before .* can electrocute it!$")
+	personTarget = string.match(line, "^(.*) manages to slap .*'s hands away before .* can electrocute it!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SHOCKING GRASPS", person, personTarget)
+elseif string.find(line, "^(.*) wavers under the impact of (.*)'s lightning bolt, its body twitching!$") then
+	person = string.match(line, "^.* wavers under the impact of (.*)'s lightning bolt, its body twitching!$")
+	personTarget = string.match(line, "^(.*) wavers under the impact of .*'s lightning bolt, its body twitching!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("LIGHTNING BOLTS", person, personTarget)
+elseif string.find(line, "^(.*) goes into spasm as (.*)'s bolt of lightning slams into [himherit]+!$") then
+	person = string.match(line, "^.* goes into spasm as (.*)'s bolt of lightning slams into [himherit]+!$")
+	personTarget = string.match(line, "^(.*) goes into spasm as .*'s bolt of lightning slams into [himherit]+!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("LIGHTNING BOLTS", person, personTarget)
+elseif string.find(line, "^(.*) opens a gate to its own plane and steps through.$") then
+	person = string.match(line, "^(.*) opens a gate to its own plane and steps through.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("DISAPPEARS", person)
+elseif string.find(line, "^(.*) slows to normal speed!$") then
+	person = string.match(line, "^(.*) slows to normal speed!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("LOST HASTE", person)
+elseif string.find(line, "^(.*) is moving more slowly.$") then
+	person = string.match(line, "^(.*) is moving more slowly.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("IS SLOWED", person)
+elseif string.find(line, "^(.*)'s muscles lose their heightened power!$") then
+	person = string.match(line, "^(.*)'s muscles lose their heightened power!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("LOST GIANT STRENGTH", person)
+elseif string.find(line, "^You feel yourself moving more slowly.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("YOU LOST HASTE")
+elseif string.find(line, "^You feel stronger.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("WEAKEN WORE OFF")
+	echo("ProcessingEnd")
+elseif string.find(line, "^You feel yourself speed up.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("SLOW WORE OFF")
+elseif string.find(line, "^(.*) is knocked senseless by the force of (.*)'s blow!$") then
+	person = string.match(line, "^.* is knocked senseless by the force of (.*)'s blow!$")
+	personTarget = string.match(line, "^(.*) is knocked senseless by the force of .*'s blow!$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("KNOCKS OUT (Headbutt)", person, personTarget)
+elseif string.find(line, "^You rub the dirt out of your eyes.$") then
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("DIRT KICK WORE OFF")
+elseif string.find(line, "^(.*) seems to glow faintly, his eyes gleaming with newfound energy.$") then
+	person = string.match(line, "^(.*) seems to glow faintly, his eyes gleaming with newfound energy.$")
+	echoEditor(highlightNormal, backgroundColor)
+	notifyHighlight("USED DAYBREAK", person)
+else 
+	Note("Error: Regex not found")
+	Note(line)
+end</script>
+
+			<triggerType>0</triggerType>
+			<conditonLineDelta>0</conditonLineDelta>
+			<mStayOpen>0</mStayOpen>
+			<mCommand></mCommand>
+			<packageName></packageName>
+			<mSoundFile></mSoundFile>
+			<regexCodeList>
+				<string>^(?:\> )*(Your spirit companions leave you.|You feel less protected.|Your clothing feels soft again.|You feel less righteous.|Your ward dissolves.|Your skin feels soft again.|Your rage ebbs.|You slowly float to the ground.|The bubble of airy water collapses.|You are no longer invisible.|Your force shield shimmers then fades away.|Your spell ward dissolves.|You feel yourself slow down.|You feel weaker.|You retain your stance.|Your pulse slows to normal.|You start to (pray|chant).|(.*) starts to (pray|chant).|You regain your footing.|You need to regain your feet first.|You regain consciousness and rise unsteadily to your feet.|(.*) regains consciousness and rises unsteadily to (its|his|her) feet.|(.*) starts to concentrate.|(.*) utters the words, (.*).|(.*) glows with mystical energy!|(.*) tries to disarm you, but fails.|(.*) disarms you and sends your weapon flying!|(.*) regains (his|her|its) footing.|There is too much chaos going on right now.|Your spirit feels more settled.|Your body feels less fatigued.|The ether wire phases partially out of existence. |You feel level-headed again.|Your skin feels soft again.|You fight a battle of inner will.|You thunder forth a tremendous rallying cry!|(.*) thunders forth a tremendous rallying cry!|(.*) sounds the retreat!|You assume (a|an) (neutral|defensive|aggressive) stance.|You trip (.*) and (he|she|it) goes down!|You are ready to summon another treant.|You feel able to conjure another elemental.|Yippee! It worked.|The white aura around your body fades.|You feel your pulse slow down.|Pink flames surround (.*).|Better stand up first.|Your elemental flickers slightly.|That group is in the thick of battle.|Your mount is now rested and recharged.|You no longer see in the dark.|A spirit steed glows brightly and vanishes back to the upper planes.|Your spirit companion flickers slightly.|Both of (its|his|her) legs are already mangled.|Your methodical attack breaks down as (.*) taunts you.|Your bash misses and you fall flat on your face!|You slam into (.*) and send (him|her|it) sprawling!|You evade (.*)'s bash and (he|she|it) falls flat on (his|her|its) face.|(.*) slams into (.*) and sends (.*) sprawling!|(.*)'s bash misses and (he|she|it) falls flat on (his|her|its) face.|You try to trip (.*) but end up tripping yourself!|(.*) tries to trip (.*) but ends up tripping (himself|herself|itself)!|(.*) trips you and you go down!|(.*) trips (.*) sending (him|her|it) to the ground.|(.*) appears to be blinded.|(.*) is blinded by the dirt in (his|her|its) eyes!|(.*) sly taunts cause (.*) to charge (him|her|it) in fury.|(.*) attempts to taunt (.*), but just sounds lame.|(.*) goes crazy as (.*) begins taunting (him|her|it) mercilessly.|(.*) tries to taunt you. Maybe you should teach (him|her|it) a lesson\?|Your sly taunts cause (.*) to charge you in fury.|(.*) is standing behind your victim, blocking your attack.|You are too busy defending yourself.|(.*) is still hyper-alert from combat.|(His|Her|Its) weapon won't budge!|You fail to disarm (.*).|(.*) disarms you but you secure your weapon.|You disarm (.*) and send [hisherits]+ weapon flying!|(.*) disarms (.*) and sends [hisherits]+ weapon flying!|You feel unclean.|(.*) looks very uncomfortable.|You disarm (.*)!|(.*) disarms (.*)!|.* (is|are) nearby (north|east|south|west|northeast|southeast|southwest|northwest|up|down) from here.|.* (is|are) not too far off (north|east|south|west|northeast|southeast|southwest|northwest|up|down) from here.|.* (is|are) fairly far (north|east|south|west|northeast|southeast|southwest|northwest|up|down) from here.|.* (is|are) a long ways off (north|east|south|west|northeast|southeast|southwest|northwest|up|down) from here.|(.*) gesticulates and suddenly (.*) is vomiting as [hisherits]* organs twist!|(.*)'s petrification spell turns (.*) to stone!|(.*) howls in agony as the magma clings to [hisherits]+ body!|(.*) unleashes a torrent of magma on (.*), charring [hisheritsyour]+ flesh severely!|(.*)'s blast of acid sprays (.*), sizzling and burning [hisheritsyour]+ skin!|(.*) dodges aside but is still affected (.*)'s acid blast.|(.*) throws a flurry of magic missile at (.*)!|You are blinded!|(.*) tosses [hisherits]+ glowing spear at (.*) and rejoices as it hits [himherit]+.|(.*)'s faithful spear sails wide, but (.*) still cringes in pain.|(.*) fires a lance of gloom at (.*) which envelopes [herhimityou]+ in shadow.|(.*) drains some of (.*)'s magical energy!|(.*) cringe[s]* in terror from (.*)'s bolt of glory!|(.*) surrounded by a nimbus of holy light!|(.*) bursts into a glorious flash of holy light and crumbles to dust!|(.*) weep[s]* in pain and despair as (.*)'s bolt of glory hits [himherityou]+.|(.*) causes bloody wounds to open in (.*)'s arms and legs!|(.*) causes large, bloody wounds to open in (.*)'s chest!|(.*) causes blood to trickle from (.*)'s eyes and ears!|(.*) appears to be deaf.|You are deafened!|(.*) look[s]* tired and weak.|(.*) looks very ill.|You feel very sick.|You smell (.*)'s roasting flesh as (.*) burns [himherit]+ with hellfire!|(.*) dodge[s]* aside as (.*)'s hellfire washes over [himherityou]+.|(You) feel your flesh roast as (.*) burns you with [hisherits]+ hellfire!|(.*) whiten[s]* slightly as (.*) drains a portion of [itsherhisyour]+ life-force!|(.*) stagger[s]* momentarily after (.*) points [hisherits]+ finger at [himherityou]+!|(.*) begin[s]* to drool at the mouth.|(.*) turn[s]* blue and shivers.|(.*) shivers but fights on as (.*) attacks with [hisherits]+ chill touch!|(.*) gets a wild look in [hisherits]+ eyes.|(.*) enveloped in a mantle of deepest darkness.|(.*) whitens as (.*) drains a large portion of its life-force!|(.*) appears withered and pale after (.*) drains its blood.|(.*) screams in agony as plague sores erupt from its skin.|(.*) fills the room with a tangible aura of fear and horror!|You howl in agony as the magma clings to your body!|(.*) turns ethereal.|(.*) is knocked unconscious by the force of (.*)'s blow!|You are knocked unconscious by the force of (.*)'s blow!|(.*) cries out in pain as (.*) touches [himherit]+ with his electrical hands.|(.*) manages to slap (.*)'s hands away before .* can electrocute it!|(.*) goes into spasm as (.*)'s bolt of lightning slams into [himherit]+!|(.*) wavers under the impact of (.*)'s lightning bolt, its body twitching!|(.*) opens a gate to its own plane and steps through.|(.*) slows to normal speed!|(.*) is moving more slowly.|(.*)'s muscles lose their heightened power!|You feel yourself moving more slowly.|You feel stronger.|You feel yourself speed up.|(.*) is knocked senseless by the force of (.*)'s blow!)$</string>
+			</regexCodeList>
+			<regexCodePropertyList>
+				<integer>1</integer>
+			</regexCodePropertyList>
+		</Trigger>
+	</TriggerPackage>
+    <AliasPackage>
+        <Alias isActive="yes" isFolder="no">
+            <name>Mark Target</name>
+            <script>
+clientCheck = "%" .. "1"
+if "%1" ~= clientCheck then
+	if "%1" ~= "" then
+		target = "%1"
+		SetVariable("target", target)
+		Note("Target: %1")
+	else 
+		target = ""
+		SetVariable("target", target)
+		Note("Target Cleared")
+	end
+else
+	if matches[2] then
+		target = matches[2]
+		echo("Target: " .. matches[2])
+		if targetID then killTrigger(targetID) end
+		targetID = tempRegexTrigger("(?i)("..target..")", [[selectString(matches[2], 1) fg("red") resetFormat()]])
+		--targetID = tempRegexTrigger("(?i)("..target..")", function() selectString(target, 1) fg("red") deselect() resetFormat() end)
+	else 
+		target = ""
+		echo("Target Cleared")
+		killTrigger(targetID)
+	end
+end
+</script>
+            <command></command>
+            <regex>^tar(?:g|ge|get)? ([a-zA-Z0-9\-\s]+)?</regex>
+        </Alias>
+        <Alias isActive="yes" isFolder="no">
+            <name>Display Target</name>
+            <script>
+clientCheck = "%" .. "1"
+if "%1" ~= clientCheck then
+	Note("Current Target: " .. GetVariable("target"))
+else
+	echo("Current Target: " .. target)
+end 
+</script>
+            <command></command>
+            <regex>^tar$</regex>
+        </Alias>
+    </AliasPackage>
+</MudletPackage>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_Names"
+   author="Aello"
+   id="A1B11111B1111CC11111213C"
+   language="Lua"
+   purpose="Manages names within the game"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+	Useful tools to manage the names in the game.
+]]>
+</description>
+
+</plugin>
+
+<triggers>
+	<trigger
+		enabled="y"
+		match="^\[(---|Elf|Spr|Gno|HEl|Hum|Gri|Min|Gia|Cen|Dwa|DEl|Hal) (---|Pal|Pri|Bar|Brb|Mer|Swa|Hel|Sha|Rog|Sco|Sor|War|Nec)\][\[a-zA-Z\]]* ([a-zA-Z]+).*$"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+	<send>table.insert(tempPlayerList, "%3")</send>
+	</trigger>
+	<trigger
+		enabled="y"
+		match="^Players found: .*$"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			newMarker = "bottom"
+			if next(mainPlayerList) == nil then
+				mainPlayerList = tempPlayerList
+			else
+				leaveList = {}
+				joinList = {}
+				for i,j in ipairs(mainPlayerList) do 
+					uniqueName = true
+					color = ""
+					for k,l in ipairs(tempPlayerList) do
+						if j == l then
+							uniqueName = false
+						end
+					end
+					if uniqueName then
+						table.insert(leaveList, j)
+					end
+				end
+				
+				for i,j in ipairs(tempPlayerList) do 
+					uniqueName = true
+					color = ""
+					for k,l in ipairs(mainPlayerList) do
+						if j == l then
+							uniqueName = false
+						end
+					end
+					if uniqueName then
+						table.insert(joinList, j)
+					end
+				end
+
+				leaveString = ""
+				joinString = ""
+				if next(leaveList) ~= nil then
+					for m,n in ipairs(leaveList) do 
+						leaveString = leaveString .. " " .. n
+					end
+				end
+
+				if next(joinList) ~= nil then
+					for m,n in ipairs(joinList) do 
+						joinString = joinString .. " " .. n
+					end
+				end
+
+				if leaveString ~= "" or joinString ~= "" then
+					ColourNote("silver", "black", "Who changes:", "red", "black", leaveString, "lime", "black", joinString)
+				end
+			end
+			mainPlayerList = tempPlayerList
+			tempPlayerList = {}
+		</send>
+	</trigger>
+</triggers>
+
+</aliases>
+
+</muclient>
