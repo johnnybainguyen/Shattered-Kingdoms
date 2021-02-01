@@ -74,7 +74,7 @@ Manages all identify/lores of the game
 <aliases>
 	<!--  Identify Aliases  -->
 	<alias
-		match="^(c '?(id|ide|iden|ident|identi|identif|identify))'? ([0-9a-zA-Z\.]+)$"
+		match="^(c '?(id|ide|iden|ident|identi|identif|identify))'? ([0-9a-zA-Z\.\-']+)$"
 		enabled="y"
 		regexp="y"
 		send_to="12"
@@ -133,7 +133,7 @@ Manages all identify/lores of the game
 
 	<!--  Lore Aliases  -->
 	<alias
-		match="^(lore|lor) ([0-9a-zA-Z\.]+)$"
+		match="^(lore|lor) ([0-9a-zA-Z\.\-']+)$"
 		enabled="y"
 		regexp="y"
 		send_to="12"
