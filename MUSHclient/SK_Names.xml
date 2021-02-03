@@ -38,59 +38,14 @@
 		sequence="100"
 	>
 		<send>
-			newMarker = "bottom"
-			if next(mainPlayerList) == nil then
-				mainPlayerList = tempPlayerList
-			else
-				leaveList = {}
-				joinList = {}
-				for i,j in ipairs(mainPlayerList) do 
-					uniqueName = true
-					color = ""
-					for k,l in ipairs(tempPlayerList) do
-						if j == l then
-							uniqueName = false
-						end
-					end
-					if uniqueName then
-						table.insert(leaveList, j)
-					end
-				end
-				
-				for i,j in ipairs(tempPlayerList) do 
-					uniqueName = true
-					color = ""
-					for k,l in ipairs(mainPlayerList) do
-						if j == l then
-							uniqueName = false
-						end
-					end
-					if uniqueName then
-						table.insert(joinList, j)
-					end
-				end
-
-				leaveString = ""
-				joinString = ""
-				if next(leaveList) ~= nil then
-					for m,n in ipairs(leaveList) do 
-						leaveString = leaveString .. " " .. n
-					end
-				end
-
-				if next(joinList) ~= nil then
-					for m,n in ipairs(joinList) do 
-						joinString = joinString .. " " .. n
-					end
-				end
-
-				if leaveString ~= "" or joinString ~= "" then
-					ColourNote("silver", "black", "Who changes:", "red", "black", leaveString, "lime", "black", joinString)
-				end
-			end
-			mainPlayerList = tempPlayerList
-			tempPlayerList = {}
+newMarker="bottom"if next(mainPlayerList)==nil then mainPlayerList=tempPlayerList else leaveList={}joinList={}for a,b in ipairs(mainPlayerList)do uniqueName=true;color=""for c,d in ipairs(tempPlayerList)do if b==d then uniqueName=false end end;if uniqueName then table.insert(leaveList,b)end end;for a,b in ipairs(tempPlayerList)do uniqueName=true;color=""for c,d in ipairs(mainPlayerList)do if b==d then uniqueName=false end end;if uniqueName then table.insert(joinList,b)end end;leaveString=""joinString=""if next(leaveList)~=nil then for e,f in ipairs(leaveList)do leaveString=leaveString.." "..f end end;if next(joinList)~=nil then for e,f in ipairs(joinList)do joinString=joinString.." "..f end end;if leaveString~=""or joinString~=""then ColourNote("silver","black","Who changes:","red","black",leaveString,"lime","black",joinString)end end;mainPlayerList=tempPlayerList;tempPlayerList={}
 		</send>
 	</trigger>
 </triggers>
+<script>
+<![CDATA[
+	tempPlayerList = {}
+	mainPlayerList = {}
+]]>
+</script>
 </muclient>
