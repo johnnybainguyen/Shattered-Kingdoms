@@ -1,0 +1,14 @@
+gcloud config set project shattered-kingdoms-302318
+
+gcloud app deploy — project shattered-kingdoms-302318 C:\Users\johnn\OneDrive\SK\SK-Server\Shattered-Kingdoms
+
+Server
+uswest4
+
+
+http://shattered-kingdoms-302711.ue.r.appspot.com/
+
+
+dev_appserver.py C:\Users\johnn\OneDrive\SK\SK-Server\Shattered-Kingdoms
+
+gcloud app deploy C:\Users\johnn\OneDrive\SK\SK-Server\Shattered-Kingdoms

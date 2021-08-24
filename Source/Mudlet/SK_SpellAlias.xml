@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MudletPackage>
+<MudletPackage version="1.0">
+    <AliasPackage>
+        <Alias isActive="yes" isFolder="no">
+            <name>Universal Spell Aliases and Directional Targetting</name>
+            <script>
+function getDirection(dir, tar)
+	direction = dir
+	if tar ~= nil and tar ~= "" then
+		if dir == " d" then
+		   direction = " down"
+		elseif dir == " u" then 
+		   direction = " up"
+		elseif dir == " n" then 
+		   direction = " north"
+		elseif dir == " ne" then
+		   direction = " northeast"
+		elseif dir == " e" then
+		   direction = " east"
+		elseif dir == " se" then
+		   direction = " southeast"
+		elseif dir == " s" then
+		   direction = " south"
+		elseif dir == " sw" then
+		   direction = " southwest"
+		elseif dir == " w" then
+		   direction = " west"
+		elseif dir == " nw" then
+		   direction = " northwest"
+		end
+	end
+	return direction
+end
+
+spells = {
+-- Common Spells
+arm = "armor",
+bls = "bless",
+bl = "blindness",
+can = "cancellation",
+cbl = "cure blindness",
+ccri = "cause critical",
+cde = "cure deafness",
+cdi = "cure disease",
+clit = "continual light",
+cli = "cause light",
+cf = "create food",
+cpo = "cure poison",
+cr = "curse", -- credit
+cri = "cure critical", -- cringe
+cser = "cause serious",
+ct = "chill touch",
+cw = "control weather",
+cwa = "create water",
+dta = "detect aura",
+db = "detect buried",
+df = "deafness",
+dh = "detect hidden",
+di = "detect invis", -- dig
+dp = "detect poison",
+dpm = "dispel magic",
+dm = "detect magic",
+exo = "exorcism",
+ff = "faerie fire",
+ffg = "faerie fog",
+fl = "flamestrike",  -- fletch
+fli = "fly",
+fr = "frenzy", -- free
+g = "gate", -- get
+kal = "know alignment",
+h = "heal", -- hit
+hw = "holy word",
+id = "identify",  -- idea
+iv = "invis",
+lc = "locate object",
+li = "cure light", -- light
+miv = "mass invis",
+pr = "protection",  -- prompt
+ps = "poison",
+rc = "recharge",
+rd = "raise dead",
+ref = "refresh", -- ??
+reg = "regeneration",
+rmc = "remove curse",
+rt = "rift",
+san = "sanctuary",
+sd = "shield",
+ser = "cure serious",  -- serenade
+sf = "spear of faith",
+slp = "sleep",
+spw = "spell ward",
+su = "summon",
+ss = "spirit sight",
+tp = "teleport",
+wb = "water breathing",
+wk = "weaken",
+wor = "word of recall",  -- worth
+
+-- Priest --
+hsb = "holy symbol",
+mv = "magical vestment",
+ch = "harm", -- channel
+mh = "mass healing",
+res = "resurrection", -- rest
+ll = "lightenload",
+rmcp = "remove compulsion",
+
+-- Warlock
+bh = "burning hands",
+bol = "breath of life",
+cc = "cone of cold",
+ce = "conjure elements",
+chl = "chain lightning",
+csp = "create spring",
+dg = "dig",
+etq = "earthquake",
+fb = "fireball",
+hr = "healing rays",
+ig = "ironguard",  -- ignore
+lb = "lightning bolt",
+ms = "magma spray",
+re = "resist elements",  --rest
+sg = "shocking grasp",
+sts = "stone skin",
+
+-- Necromancer
+ad = "animate dead",  -- adjective
+ctu = "control undead",
+ds = "death shroud",
+ed = "energy drain",
+fear = "fear",
+fm = "feeblemind",
+fod = "finger of death",
+pg = "plague",
+slow = "slow",
+vt = "vampiric touch",  -- vt
+
+-- Sorceror
+ab = "acid blast",
+aw = "airy water",
+chm = "charm person",
+chs = "change sex",
+cs = "color spray",
+dep = "depetrification", --Deposit
+ef = "etherealform", -- effect
+enl = "enlarge",
+fs = "final strike",
+gs = "giant strength",
+hs = "haste",
+mi = "mirror image",
+mm = "magic missile",
+pet = "petrification",
+pm = "polymorph",
+shr = "shrink",
+tg = "tongues",
+uds = "understand",
+vq = "ventriloquate",
+
+-- paladin
+bg = "bolt of glory",
+call = "call armor",
+
+-- hellion
+dom = "domination",
+hf = "hellfire",
+
+-- shaman
+cal = "call lightning",
+sa = "spirit aura",
+sc = "seance", -- Score
+spd = "spirit doll",
+sph = "spirit horde",
+vd = "voodoo",
+
+-- Cabal spells
+bb = "babble",
+cgs = "changestaff",
+cpd = "creeping doom",
+emp = "emperor", -- empty
+et = "entangle",
+glc = "gloom lance", 
+gt = "green thumb", -- gtell
+hom = "hammer of light",
+ia = "invincible aura",
+mid = "midnight",
+mim = "mimic",
+scp = "scatterport",
+tbu = "tenebrious burst", 
+ts = "trackless step",
+um = "umbra mantle",
+wp = "warp",
+
+-- Religion Spells 
+ah = "accelerate healing",
+dal = "distort alignment",
+cfs = "confusion",
+dsp = "dispirit",
+dv = "devotion",
+ew = "elemental wall",
+fof = "feast of fear",
+hem = "hemorrhage",
+itd = "interdiction",
+is = "insight",
+luck = "luck",
+nrg = "energizer",
+ph = "phoenix heart",
+sop = "symbol of pain",
+trs = "true sight",
+vit = "vitality",
+war = "warpath"
+}
+spells["if"] = "infravision"
+
+clientCheck = "%" .. "1"
+if "%1" ~= clientCheck then
+	if string.find("%0", "^sh$") or string.find("%0", "^sh ") or string.find("%0", "^sho ") or string.find("%0", "^shoo ") or string.find("%0", "^shoot ") then
+		Send("shoot" .. getDirection("%2", "%3")  .. "%3")
+	elseif string.find("%0", "^th ") or string.find("%0", "^thr ") or string.find("%0", "^thro ") or string.find("%0", "^throw ") then
+		Send("throw" .. "%2" .. getDirection("%3", "%4")  .. "%4")
+	else
+		Send("c '" .. spells[string.lower("%1")] .. "'" .. getDirection("%2", "%3")  .. "%3%4")
+	end
+else
+	if string.find(matches[1], "^sh$") or string.find(matches[1], "^sh ") or string.find(matches[1], "^sho ") or string.find(matches[1], "^shoo ") or string.find(matches[1], "^shoot ") then
+		send("shoot" .. (getDirection(matches[3], matches[4]) or "")  .. (matches[4] or ""))
+	elseif string.find(matches[1], "^th ") or string.find(matches[1], "^thr ") or string.find(matches[1], "^thro ") or string.find(matches[1], "^throw ") then
+		send("throw" .. (matches[3] or "") .. (getDirection(matches[4], matches[5]) or "")  .. (matches[5] or ""))
+	else
+		send("c '" .. spells[string.lower(matches[2])] .. "'" .. (getDirection(matches[3], matches[4]) or "") .. (matches[4] or "") .. (matches[5] or ""))
+	end
+end</script>
+            <command></command>
+            <regex>^(COMMON|arm|bls|bl|can|cbl|ccri|cde|cdi|clit|cli|cf|cpo|cr|cri|cser|ct|cw|cwa|dta|db|df|dh|di|dp|dpm|dm|exo|ff|ffg|fl|fli|fr|g|kal|h|hw|id|if|iv|lc|li|mi|pr|ps|rc|rd|ref|reg|rmc|rt|san|sd|ser|sf|slp|spw|su|ss|tp|wb|wk|wor|PRIEST|hsb|mv|ch|mh|res|WARLOCK|bh|bol|cc|ce|chl|csp|dg|etq|fb|hr|ig|lb|ms|re|sg|sts|NECROMANCER|ad|ctu|ds|ed|fear|fm|fod|pg|slow|vt|SORCEROR|ab|aw|chm|chs|cs|dep|ef|enl|fs|gs|hs|mi|miv|mm|pet|pm|shr|tg|uds|vq|PALADIN|bg|call|HELLION|dom|hf|SHAMAN|cal|sa|sc|spd|sph|vd|CABALSPELL|bb|cgs|cpd|emp|et|glc|gt|hom|ia|mid|mim|scp|tbu|ts|um|wp|RELIGION|hem|spo|trs|fof|dsp|dv|ah|ph|dal|cfs|nrg|luck|ew|war|vit|itd|is|OTHER|sh(?:o|oo|oot)?|th(?:r|ro|row)?)((?:\s)[0-9a-zA-Z\.\-\'\*]+)?((?:\s)[0-9a-zA-Z\.\-\'\*]+)?((?:\s)[0-9a-zA-Z\.\-\'\*]+)?(?:\s*)$</regex>
+        </Alias>
+        <Alias isActive="yes" isFolder="no">
+            <name>Release Held spell aliases</name>
+            <script>spells = {
+-- Common Spells
+arm = "armor",
+bls = "bless",
+dta = "aura",
+db = "buried",
+dh = "hidden",
+di = "detect invis", -- dig
+dp = "poison",
+dm = "magic",
+fli = "fly",
+fr = "frenzy", -- free
+kal = "know",
+iv = "invis",
+pr = "protection",  -- prompt
+san = "sanctuary",
+sd = "shield",
+slp = "sleep",
+spw = "spell ward",
+ss = "sight",
+wb = "breathing",
+
+-- Priest --
+mv = "vestment",
+
+-- Warlock
+ig = "ironguard",  -- ignore
+re = "elements",  --rest
+sts = "stone",
+
+-- Necromancer
+ad = "animate dead",  -- adjective
+ctu = "control undead",
+ds = "death shroud",
+fear = "fear",
+fm = "feeblemind",
+
+-- Sorceror
+aw = "airy",
+chm = "charm",
+chs = "sex",
+ef = "etherealform", -- effect
+enl = "enlarge",
+mi = "mirror",
+pm = "polymorph",
+shr = "shrink",
+tg = "tongues",
+uds = "understand",
+
+-- paladin
+bg = "bolt of glory",
+
+-- hellion
+dom = "domination",
+hf = "hellfire",
+
+-- shaman
+sa = "aura",
+sc = "seance", -- Score
+
+-- Cabal spells
+bb = "babble",
+cpd = "creeping",
+emp = "emperor", -- empty
+et = "entangle",
+hom = "hammer",
+ia = "invincible",
+mid = "midnight",
+mim = "mimic",
+ts = "trackless",
+wp = "warp",
+
+-- Religion Spells 
+ah = "accelerate healing",
+dal = "distort alignment",
+cfs = "confusion",
+dsp = "dispirit",
+dv = "devotion",
+ew = "wall",
+fof = "feast of fear",
+hem = "hemorrhage",
+itd = "interdiction",
+is = "insight",
+luck = "luck",
+ph = "phoenix heart",
+sop = "symbol of pain",
+trs = "true",
+vit = "vitality",
+war = "warpath"
+}
+spells["if"] = "infravision"
+
+clientCheck = "%" .. "1"
+if "%1" ~= clientCheck then
+	Send("release " .. spells[string.lower("%1")])
+else
+	send("release " .. spells[string.lower(matches[2])])
+end</script>
+            <command></command>
+            <regex>^r (COMMON|arm|bls|bl|can|cbl|ccri|cde|cdi|clit|cli|cf|cpo|cr|cri|cser|ct|cw|cwa|dta|db|df|dh|di|dp|dpm|dm|exo|ff|ffg|fl|fli|fr|g|kal|h|hw|id|if|iv|lc|li|mi|pr|ps|rc|rd|ref|reg|rmc|rt|san|sd|ser|sf|slp|spw|su|ss|tp|wb|wk|wor|PRIEST|hsb|mv|ch|mh|res|WARLOCK|bh|bol|cc|ce|chl|csp|dg|etq|fb|hr|ig|lb|ms|re|sg|sts|NECROMANCER|ad|ctu|ds|ed|fear|fm|fod|pg|slow|vt|SORCEROR|ab|aw|chm|chs|cs|dep|ef|enl|fs|gs|hs|mi|mm|pet|pm|shr|tg|uds|vq|PALADIN|bg|call|HELLION|dom|hf|SHAMAN|cal|sa|sc|spd|sph|vd|CABALSPELL|bb|cgs|cpd|emp|et|glc|gt|hom|ia|mid|mim|scp|tbu|ts|um|wp|RELIGION|hem|spo|trs|fof|dsp|dv|ah|ph|dal|cfs|nrg|luck|ew|war|vit|itd|is|OTHER|sh(?:o|oo|oot)?|th(?:r|ro|row)?)((?:\s)[0-9a-zA-Z\.\-\'\*]+)?((?:\s)[0-9a-zA-Z\.\-\'\*]+)?((?:\s)[0-9a-zA-Z\.\-\'\*]+)?(?:\s*)$</regex>
+        </Alias>
+
+    </AliasPackage>
+</MudletPackage>

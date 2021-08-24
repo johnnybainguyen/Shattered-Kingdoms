@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_Timer"
+   author="Aello"
+   id="1111114111111111BBBB111C"
+   language="Lua"
+   purpose="Notifies timer for different areas"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Notifies timer for different areas
+
+]]>
+</description>
+
+</plugin>
+
+<!--  Triggers  -->
+<triggers>
+	<trigger
+		enabled="y"
+		match="^(\> )*Your staff grows into a large treant\.$"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			DoAfterSpecial(60*6, 'ColourNote("peru", "black", "Changestaff Treant: 45/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*6, 'timerNotifyChat("peru", "Changestaff Treant: 45/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*22, 'ColourNote("peru", "black", "Changestaff Treant: 30/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*22, 'timerNotifyChat("peru", "Changestaff Treant: 30/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*37, 'ColourNote("peru", "black", "Changestaff Treant: 15/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*37, 'timerNotifyChat("peru", "Changestaff Treant: 15/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*42, 'ColourNote("peru", "black", "Changestaff Treant: 10/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*42, 'timerNotifyChat("peru", "Changestaff Treant: 10/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*46, 'ColourNote("peru", "black", "WARNING Changestaff Treant: 5/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*46, 'timerNotifyChat("peru", "WARNING Changestaff Treant: 5/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*51, 'ColourNote("peru", "black", "WARNING Changestaff Treant: 1/52 minutes left")', sendto.script)
+			DoAfterSpecial(60*51, 'timerNotifyChat("peru", "WARNING Changestaff Treant: 1/52 minutes left")', sendto.script)
+		</send>
+	</trigger>
+	<trigger
+		enabled="y"
+		match="^(\> )*A bell tolls\, far away in the fog\.$"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			Note("Necropolis Tick: 0/24")
+			timerNotifyChat("peru", "Necropolis Tick: 0/24")
+			DoAfterNote(60*5, "Necropolis Tick: 5/24")
+			DoAfterSpecial(60*5, 'timerNotifyChat("peru", "Necropolis Tick: 5/24")', sendto.script)
+			DoAfterNote(60*10, "Necropolis Tick: 10/24")
+			DoAfterSpecial(60*10, 'timerNotifyChat("peru", "Necropolis Tick: 10/24")', sendto.script)
+			DoAfterNote(60*15, "Necropolis Tick: 15/24")
+			DoAfterSpecial(60*15, 'timerNotifyChat("peru", "Necropolis Tick: 15/24")', sendto.script)
+			DoAfterNote(60*20, "Necropolis Tick: 20/24")
+			DoAfterSpecial(60*20, 'timerNotifyChat("peru", "Necropolis Tick: 20/24")', sendto.script)
+			DoAfterNote(60*22, "Necropolis Tick: 22/24")
+			DoAfterSpecial(60*22, 'timerNotifyChat("peru", "Necropolis Tick: 22/24")', sendto.script)
+			DoAfterNote(60*23, "Necropolis Tick: 23/24")
+			DoAfterSpecial(60*24, 'timerNotifyChat("peru", "Necropolis Tick: 23/24")', sendto.script)
+			DoAfterNote(60*24, "Necropolis Tick: TICK")
+			DoAfterSpecial(60*24, 'timerNotifyChat("peru", "Necropolis Tick: TICK")', sendto.script)
+		</send>
+	</trigger>
+	
+	
+	<trigger
+		enabled="y"
+		match="^(\> )*Your summons is answered with a (fire|water|earth|air) elemental\.$"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			DoAfterNote(60*5, "Elemental: 25/30 minutes left")
+			DoAfterSpecial(60*5, 'timerNotifyChat("peru", "Elemental: 25/30 minutes left")', sendto.script)
+			DoAfterNote(60*10, "Elemental: 20/30 minutes left")
+			DoAfterSpecial(60*10, 'timerNotifyChat("peru", "Elemental: 20/30 minutes left")', sendto.script)
+			DoAfterNote(60*15, "Elemental: 15/30 minutes left")
+			DoAfterSpecial(60*15, 'timerNotifyChat("peru", "Elemental: 15/30 minutes left")', sendto.script)
+			DoAfterNote(60*20, "Elemental: 10/30 minutes left")
+			DoAfterSpecial(60*20, 'timerNotifyChat("peru", "Elemental: 10/30 minutes left")', sendto.script)
+			DoAfterNote(60*25, "Elemental: 5/30 minutes left")
+			DoAfterSpecial(60*25, 'timerNotifyChat("peru", "Elemental: 5/30 minutes left")', sendto.script)
+			DoAfterNote(60*28, "Elemental: 2/30 minutes left")
+			DoAfterSpecial(60*28, 'timerNotifyChat("peru", "Elemental: 2/30 minutes left")', sendto.script)
+			DoAfterNote(60*30, "WARNING: Elemental: 30/30 minutes left")
+			DoAfterSpecial(60*30, 'timerNotifyChat("peru", "WARNING: Elemental: 30/30 minutes left")', sendto.script)
+		</send>
+	</trigger>
+	<trigger
+		enabled="y"
+		match="You utter the words\, \'fuyh\'\.\nA magical rift suddenly appears out of nowhere."
+		multi_line="y"
+		lines_to_match="2"
+		send_to="12"
+		regexp="y"
+		sequence="100"
+	>
+		<send>
+			riftTarget = GetVariable("riftTarget") or ""
+			if riftTarget ~= "" then
+				DoAfterSpecial(60*45, 'ColourNote("peru", "black", "Rift " .. riftTarget .. ": 5/50 minutes left")', sendto.script)
+				DoAfterSpecial(60*45, 'timerNotifyChat("peru", "Rift " .. riftTarget .. ": 5/50 minutes left")', sendto.script)
+				SetVariable("riftTarget", "")
+			end
+		</send>
+	</trigger>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="(\> )*You utter the words, 'ouaih ghcandusiohp'.\n(\> )*([a-zA-Z\s\'\-]+) muscles surge with heightened power\.$"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>DoAfterNote(27*60, "%3" .. " giant strength wore off.")
+			DoAfterSpecial(27*60, 'timerNotifyChat("peru", "%3 giant strength wore off.")', sendto.script)
+  </send>
+  </trigger>
+  
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="(\> )*You utter the words, 'paghz'.\n(\> )*([a-zA-Z\s\'\-]+) is moving more quickly\.$"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>DoAfterNote(27*60 - 30, "%3\'s" .. " haste wore off.")
+			DoAfterSpecial(27*60 - 30, 'timerNotifyChat("peru", "%3\'s haste wore off.")', sendto.script)
+  </send>
+  </trigger>
+  
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="(\> )*You utter the words, 'ouaih ghcandusiohp'.\n(\> )*Your muscles surge with heightened power\!$"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>DoAfterNote(27*60 - 30, "Your giant strength wore off.")
+			DoAfterSpecial(27*60 - 30, 'timerNotifyChat("peru", "Your giant strength wore off.")', sendto.script)
+  </send>
+  </trigger>
+
+
+</triggers>
+<aliases>
+	<alias
+		match="^(rt|c ri|c rif|c rift) ([a-zA-Z]+)$"
+		enabled="y"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			SetVariable("riftTarget", "%1")
+			Send("c rift %2")
+		</send>
+	</alias>
+</aliases>
+<script>
+
+<![CDATA[
+  function timerNotifyChat(color, notification)
+    require "serialize"
+    check (CallPlugin ("11111141111111111111111C", "customNotify", color, notification))
+  end -- chattrigger
+
+]]>
+
+</script>
+</muclient>
