@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_DreamDrop"
+   author="Aello"
+   id="11111111111111111111213C"
+   language="Lua"
+   purpose="Keeps track of dream drops count"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Keeps count of dream drops
+]]>
+</description>
+
+</plugin>
+
+<triggers>
+  <trigger
+   enabled="y"
+   match="^(\&gt; )*A bracelet of dream drops bubbles pleasantly on your wrist\.$"
+   regexp="y"
+   send_to="12"
+   sequence="101"
+  >
+  <send>dreamCount = GetVariable("dreamCount") or 0
+
+if tonumber(dreamCount) &gt; 0 then
+   dreamCount = dreamCount - 1
+   dreamNote = ""
+   if tonumber(dreamCount) == 0 then
+      dreamNote = "EMPTY"
+   end
+   SetVariable("dreamCount", dreamCount)
+   Note("Dream Drops: " .. dreamCount .. " " .. dreamNote)
+end</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   match="^(\&gt; )*You feel an effervescent energy dissipate into your dreams\.$"
+   regexp="y"
+   send_to="12"
+   sequence="101"
+  >
+  <send>dreamCount = GetVariable("dreamCount") or 0
+
+if tonumber(dreamCount) &lt; 3 then
+   dreamCount = dreamCount + 1
+   dreamNote = ""
+   if tonumber(dreamCount) == 3 then
+      dreamNote = "FULL"
+   end
+   SetVariable("dreamCount", dreamCount)
+   Note("Dream Drops: " .. dreamCount .. " " .. dreamNote)
+end</send>
+  </trigger>
+  
+ <trigger
+   enabled="y"
+   match="^(\&gt; )*A bracelet of dream drops has no energy to grant you\.$"
+   regexp="y"
+   send_to="12"
+   sequence="101"
+  >
+  <send>SetVariable("dreamCount", 0)
+  </send>
+ </trigger>
+</triggers>
+
+<aliases>
+  <alias
+   match="^dream reset$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>SetVariable("dreamCount", 0)</send>
+  </alias>
+</aliases>
+</muclient>

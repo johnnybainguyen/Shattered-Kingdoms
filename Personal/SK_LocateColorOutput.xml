@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_LocateColorOutput"
+   author="Aello"
+   id="11111111111A1B11111C111B"
+   language="Lua"
+   purpose="Outputs Location spell"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Captures Identify Info
+
+Output identify info upon command
+]]>
+</description>
+
+</plugin>
+
+<!--  Triggers  -->
+
+<triggers>
+  <trigger
+   enabled="n"
+   group="locateTrigger"
+   match="^(a corpse of a male halfling in The Ice Hut\.|a corpse of a dwarf carried by Asher the Wolfmistress\.|the corpse of a griffon carried by a Val di Magra\.|a corpse of a deep-elf in A Gloaming Cavern\.|a corpse of a gnome in A corridor of shadow\.|a corpse of a gnome in the deep earth\.|a corpse of a human in the deep earth\.|a corpse of a dwarf in The Contested Ground\.|A gibbet in The Gates of Seawatch\.|a corpse of a small child in the deep earth\.|a corpse of a small child in the deep earth\.|a leathery, grey human corpse in the deep earth\.|A bloated corpse in the deep earth\.|a corpse of a dwarf in the deep earth\.|the corpse of a small child carried by a troglodyte hunter\.|the corpse of a half-rotten troll carried by a carrion worm\.|A scrawny dressed chicken carried by a filthy human male\.|a corpse of a human in At a marble dais\.|a corpse of an emaciated female deep-elf in A Large Storeroom\.|a bloated, massacred corpse in An Experimentation Chamber\.|a corpse of a centaur in the deep earth\.|a corpse of a small child in the deep earth\.|a corpse of a plump male dwarf in the deep earth\.|a corpse of an adolescent centaur in the deep earth\.|a corpse of a human in A sealed chamber\.|a corpse of a bulky male human in the deep earth\.|a corpse of a Peacekeeper sentinel in A Cemetery\.|a corpse of a bulky male human in the deep earth\.|a corpse of a human in A forboding lair\.|A rotted corpse in A pocket cavern\.|a corpse of a gnome in the deep earth\.|A broken skeleton in A forested hill\.|a rotted corpse of a centaur in A Violently Churning Whirlpool\.|a crushed dwarven corpse in A Collapsed Guard Post In A Closed Section Of The Marne Mine\.|a corpse of a griffon in A Dead End\.|a corpse of an adolescent centaur in the deep earth\.|a corpse of a grey horse in The Blasted Fields\.|a corpse of an elf in The Mortuary\.|A broken skeleton in A barren stone chamber\.|a corpse of a human in the deep earth\.|a corpse of a gnome carried by the illithid healer\.|a corpse of an ogre in A High Vaulted Cavern\.|a corpse of a human in the deep earth\.|a corpse of an adolescent centaur in the deep earth\.|a rotted corpse of a centaur in A Murky Lake\.|The corpse of the village potter in A crimson-splattered rotund structure\.|a corpse of a small child in the deep earth\.|a corpse of a bulky male human in the deep earth\.|a corpse of a human in A misty grove\.|A broken skeleton in The End of an Old Wooded Street\.|a corpse of a human in the deep earth\.|a small, decaying humanoid corpse in The Ocean Bottom\.|a corpse of a grey horse in The Road of Good Intent\.|a corpse of a deep-elf in the deep earth\.|A broken skeleton in Inside the tree\.|a corpse of an elf in The Mortuary\.|a corpse of a human in An earthen crypt\.|a corpse of a deep-elf carried by the illithid healer\.|a corpse of a small child in the deep earth\.|a skewered mass of humanoid flesh in A cramped underground bedchamber\.|the corpse of a young woman in the deep earth\.|a corpse of a human in the deep earth\.|a corpse of a plump male dwarf in the deep earth\.|a corpse of a plump male dwarf in the deep earth\.|a corpse of a small child in the deep earth\.|An immaculately preserved human corpse in the deep earth\.|a corpse of a slim male elf in The Blasted Fields\.|a corpse of a grey horse in The Mire of No Return\.|a corpse of a giant spider in Cif Plains\.|a corpse of a skinned rat carried by Jahrney the scrawny\.|a corpse of an adolescent centaur in the deep earth\.|a corpse of a drowned dwarf in Top of a waterfall\.|a corpse of a deep-elf in The Contested Ground\.|a bloated corpse of an elf in A Murky Lake\.|the corpse of a decaying orc in the deep earth\.|the corpse of a deep-elf in A Cave\.|a corpse of an adolescent centaur in the deep earth\.|a corpse of a muscular female centaur in The Blasted Fields\.|the corpse of a deep-elf in A Cave\.|a corpse of a halfling in the deep earth\.|a corpse of a human in An Old Sewer System\.|the corpse of a griffon carried by a Val di Magra\.|a corpse of a deep-elf in A Gloaming Cavern\.|a corpse of a human in A war-torn clearing\.|a corpse of a human in An Altar Of Onyx\.|a mangled corpse in A Ransacked Hut\.|a corpse of a half-elf in the deep earth\.|a corpse of a human in A misty grove\.|the lifeless body of a calico-colored cat carried by a crazed male human\.|a rotting corpse in A Foyer of Body Parts\.|a corpse of an ooze-covered human in the deep earth\.|a corpse of Chief Keldir in Witch Doctor's Hut\.|a corpse of an orc in The Contested Ground\.|a corpse of a human in A war-torn clearing\.|the corpse of an orcish boy in the deep earth\.|a corpse of a male gnome in The Ice Hut\.|a corpse of a griffon in the deep earth\.|A broken skeleton in An Ancient Sepulcher\.|a corpse of a black-crested harpy in The Highsight Mountain Range\.|a corpse of a human in An icy chamber by a collapsed wall\.\.|a corpse of an elf in the deep earth\.|the corpse of Arandir Vith'Ravian in A Refectory\.|a corpse of a human in An alcove in the hall of sacrifice\.|the corpse of a small child carried by Frae Moden\.|the corpse of a griffon in On the Shore of the River\.|a withered human corpse in the deep earth\.|the rotting corpse of a hairy quep in The Lost Jungle\.|a corpse of a grey horse in A Span of Scorched Earth\.|a frozen, desiccated halfling corpse in the deep earth\.|a corpse of a griffon in An alcove in the hall of sacrifice\.|a corpse of a slim male elf in The Road of Good Intent\.|A mangled half-elf corpse in the deep earth\.|The corpse of a paladin in A Cave\.|a bloated corpse of an elf in A Violently Churning Whirlpool\.|a corpse of a giant in A High Vaulted Cavern\.|A charred corpse of a dwarf in A dark tunnel\.|the corpse of Leila Reluskus in A Refectory\.|a corpse of a minotaur in the deep earth\.|a corpse of a deep-elf in A semi-circular chamber\.|a corpse of a human in The Throne Room\.|a deteriorated half-elven corpse in the deep earth\.|a corpse of an elf in the deep earth\.|a corpse of an elven child in A waterlogged shrine to Dabi\.|a corpse of a human in The Dragon's Hoard\.|A rotting gnome corpse in Dead End\.|a corpse of a human in A burial chamber\.|a corpse of a giant cave spider in A dangerous cavern, filled with fractured rocks\.|the corpse of a half-rotten troll in A gore-filled pit\.|a corpse of the loader mob in The Heart of the Black Market\.|a corpse of a unwitting sheep in The Slaughter Yards\.|a corpse of Keltharian in The Chieftain's Private Chambers\.|a corpse of a dwarf in A Rough-hewn Passage\.|a corpse of a titanic female giant in the deep earth\.|a corpse of a human in A dank pit\.|a corpse of a slim male elf in The Mire of No Return\.|a corpse of a human in Laboratory\.|a corpse of a white rooster in A torch-lit chamber\.|a corpse of a dwarf in The Mortuary\.|a corpse of a passing spirit in The Void\.|a corpse of a black rooster in A torch-lit chamber\.|a corpse of  in The Mages' Circle\.|a corpse of a zombie in The paladin camp\.|a corpse of a human in The Daemon's Spine\.|a corpse of a slim male elf carried by a lion-headed leaper\.|a frozen, desiccated halfling corpse in The Abyssal Hollows of Demise\.|the corpse of a tundra ermine in Snowy Wastelands\.|a corpse of an elf in At a clearing deep in a frozen forest\.|A mangled half-elf corpse in The valley of wintery demise\.|a corpse of an average-looking sparring partner in A Corpse Disposal Shack\.|a corpse of a human carried by a morbid young necromancer\.|the corpse of a tundra ermine carried by a bandit\.|a corpse of an ogre carried by a dour male dwarf\.|a corpse of a small fleshy egg in The Void\.|a corpse of a fearsome barbarian in A Corpse Disposal Shack\.|a corpse of a whisper-thin warlock in A Corpse Disposal Shack\.|a corpse of a half-elf carried by a grey c'thonian\.|a corpse of a grey horse carried by a lion-headed leaper\.)$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+</send>
+  </trigger>
+  <trigger
+   enabled="n"
+   group="locateTrigger"
+   match="^(a pair of gauntlets set with animal claws carried by a tall male human\.|a pair of gauntlets set with animal claws carried by Iliiki the Battle-mad\.|a hollowed black claw of a dragon carried by a calloused giant barbarian\.|a hollowed black claw of a dragon carried by a calloused giant barbarian\.|a pair of gauntlets set with animal claws carried by a scarred male human\.|a pair of gauntlets set with animal claws carried by a Fox Tribe Smokedancer\.|a pair of gauntlets set with animal claws carried by a bald male human\.|a hollowed black claw of a dragon carried by a calloused giant barbarian\.|a pair of gauntlets set with animal claws carried by an overweight female human\.|a pair of gauntlets set with animal claws carried by a disfigured male human\.|a pair of gauntlets set with animal claws carried by Wyn Haakon\.|a runed finger bone carried by Victor Purgarotti\.|a pair of gauntlets set with animal claws carried by Trivis the Tavernkeep\.|a pair of silken finger gloves carried by a mage\.|a pair of gauntlets set with animal claws carried by a dwarf-like male human\.|a pair of gauntlets set with animal claws carried by an agile female human\.|brass finger cymbals carried by a tall female half-elf\.|a pair of gauntlets set with animal claws carried by a tall female human\.|a pair of gauntlets set with animal claws carried by a heavyset male human\.|a hollowed black claw of a dragon carried by a pale male giant\.|a hollowed black claw of a dragon carried by an undead halfling berserker\.|a pair of gauntlets set with animal claws carried by a small female human\.|a pair of gauntlets set with animal claws carried by a bald male human\.|a hollowed black claw of a dragon carried by a calloused giant barbarian\.|a packet of five finger grass carried by Hauani\.|a pair of gauntlets set with animal claws carried by a goateed male human\.|a hollowed black claw of a dragon carried by a pale male giant\.|a hollowed black claw of a dragon carried by a pale male giant\.|a long skeletal finger carried by Nokrak Vor Yon\.|a squishy eyeball carried by a venerable griffoness\.|a flagon-shaped eyeball washer carried by a burly male human\.|a staff with an encased eyeball carried by Drimjyanishee\.|A small pickled eyeball carried by an illithid merchant\.|a black, bulbous eyeball washer carried by a bearded male human\.|a staff with an embalmed eyeball carried by Drimjyanishee\.|a red, rubber eyeball washer carried by a twisted ghost\.|A large pickled eyeball carried by an illithid merchant\.|Some soft silk wing wraps carried by Talcar Greyfeather\.|a pair of etched wing guards carried by Threnk\.|a boneless barbequed griffon wing carried by Krintek\.|Some interlocking chainmail wing wraps carried by a young male griffon\.|a pair of brass wing guards carried by Threnk\.|a cloud of faerie wing sparkles in Radi Kenga's Chamber of Riches\.|some sparkling wing adornments carried by Kelmer the merchant\.|A mithril wing guard carried by the sprite healer\.|A bat's wing in In a mouldering tunnel\.|A bat's wing carried by a goblin shaman\.|a leafy angel's wing plant in The Lost Jungle\.|a fried chicken wing carried by Rhynno\.|A jackal's ear in In a mouldering tunnel\.|A jackal's ear carried by a goblin shaman\.|The ear of a grim male minotaur in The center of a battlefield\.|ear and nose rings linked by tiny chains carried by a wealthy noblewoman\.|a parchment stamped with an ear carried by Malyssa\.|an elephant's ear in A Medicine Worker's Home\.|a pair of shining gauntlets carried by a street sweeper\.|a pair of burnished red steel gauntlets carried by a knight of Seawatch\.|a pair of shining gauntlets carried by a Peacekeeper\.|a cold-iron hand crossbow carried by a halfling vendor\.|a pair of shining gauntlets carried by Quetine\.|a pair of shining gauntlets carried by a street sweeper\.|a finely-tuned hand crossbow carried by Khormir the Mel'nas\.|a pair of shining gauntlets carried by a Peacekeeper sentinel\.|a pair of mittened gauntlets carried by Havelock the armourer\.|a pair of shining gauntlets carried by a street sweeper\.|A minotaur hand axe carried by a minotaur soldier\.|a pair of mittened gauntlets carried by an elite Peacekeeper\.|a slender, folded hand fan carried by Lady Vanthia de Mati\.|a pair of mittened gauntlets carried by the guard\.|A pair of soft hand gloves carried by Qasim\.|a slender, folded hand fan carried by Lady Vanthia de Mati\.|a set of hand wraps of hide and fur carried by a sleepy male orc\.|The hand of a dwarven acolyte in An open room made of stained grey stone\.|a pair of shining gauntlets in The Peacekeeper Armoury\.|a pair of shining gauntlets carried by a street sweeper\.|Black and rotted hand in A thatch-strewn road\.|a pair of mittened gauntlets carried by the guard\.|A minotaur hand axe carried by a minotaur soldier\.|a pair of riveted mithril shino gote and tekkou carried by the Governor\.|a pair of obsidian hand guards carried by a humanoid, female ice wraith\.|a pair of decorative mithril hand chains carried by Shaosran\.|a shield engraved with a black hand carried by a cowled figure\.|A mirror-like pearl in Hewn Chamber\.|a pair of mittened gauntlets carried by the guard\.|a pair of shining gauntlets carried by Gervais\.|a small iron hand axe carried by a dwarven soldier\.|a pair of mittened gauntlets carried by the guard\.|a pair of shining gauntlets carried by a street sweeper\.|a hand wrap carried by a small gnome boy\.|a pair of mittened gauntlets carried by a Peacekeeper sentry\.|a set of hand wraps of hide and fur carried by an orcish patrolman\.|a dark metallic hand axe carried by a ponytailed male deep-elf\.|woven mithril links studded with adamantite carried by Jahani\.|a pair of mittened gauntlets carried by a Peacekeeper\.|a pair of shining gauntlets carried by a taslamaran celador\.|a pair of shining gauntlets carried by a Peacekeeper cadet\.|a leather and steel hand drum carried by a chubby male halfling\.|The hand of an elven forest ranger in mountain\.|A minotaur hand axe carried by a minotaur patrol guard\.|an ebony hand crossbow carried by Vincaen\.|a severed bloodwing hand carried by a venerable griffoness\.|A hand sickle carried by an insane male elf\.|a pair of shining gauntlets carried by Ferdinand Lionheart\.|a pair of shining gauntlets carried by Baltus\.|an ornate hand crossbow carried by Harich\.|a set of hand plates wrapped in white silk in The Magistrate's Office\.|A finely crafted silver wrought hand mirror in The LoreMaster's Dwelling\.|a fingerless, skeletal hand carried by Refiinde the Forsaker\.|a bag of tripe and onions carried by Meleanara the butcher's wife\.|some foot rags carried by a petite female halfling student\.|a pair of hob-nailed boots and maille pattens carried by Havelock the armourer\.|a pair of white leather boots carried by a scarred male human\.|A foot locker and rack in The Barracks\.|a pair of white leather boots carried by a tall female human\.|a pair of hob-nailed boots and maille pattens carried by Officer Chirk\.|some foot rags carried by an auburn-haired female halfling student\.|a pair of white leather boots carried by a disfigured male human\.|a sachet of 'Hot Foot' powder carried by Hauani\.|a pair of white leather boots carried by an agile female human\.|a pair of white leather boots carried by a Fox Tribe Smokedancer\.|a pair of white leather boots carried by a small male human\.|a pair of white leather boots carried by a dwarf-like male human\.|a pair of white leather boots carried by a tall male human\.|a pig's trotter carried by Meleanara the butcher's wife\.|a pair of white leather boots carried by Trivis the Tavernkeep\.|a pair of white leather boots carried by Iliiki the Battle-mad\.|A flagstone in Exile Cross\.|a pair of hob-nailed boots and maille pattens carried by an elite Peacekeeper\.|The foot of a kobold elementalist in An undulating tunnel\.|a pair of white leather boots carried by Wyn Haakon\.|a pair of white leather boots carried by a small female human\.|some foot rags carried by a long-haired male human student\.|a pair of white leather boots carried by a bald male human\.|a pair of hob-nailed boots and maille pattens carried by an off-duty Peacekeeper\.|a pair of white leather boots carried by an overweight female human\.|a pair of white leather boots carried by a hunchbacked male human\.|a pair of burnished red steel sollerets carried by a knight of Seawatch\.|a pair of white leather boots carried by a goateed male human\.|a pair of hob-nailed boots and maille pattens carried by the guard\.|a pair of hob-nailed boots and maille pattens carried by a Peacekeeper\.|a pair of white leather boots carried by a heavyset male human\.|a fist-sized heart in Pyrathia's Womb\.|a beating gnome's heart carried by a venerable griffoness\.|an ivory scepter tipped with a clenched heart in Archbishop's Quarters\.|A winged heart on a golden ring carried by an elderly male sprite\.|some bright lacquered leg plates carried by the old man\.|some matted bear's-limb arm bracers carried by a pallid male giant\.|a pair of burnished, white-iron greaves carried by Istfenir Sa'antil\.|some burnt bark leg guards carried by a wily old half-elven woman\.|Some iron leg shackles in The Hall of Sensory Assault\.|a pair of burnished, white-iron greaves carried by Cyden\.|bronze plates strapped with leather carried by a surly male dwarf\.|some matted bear's-limb arm bracers carried by a bulbous-nosed male giant\.|A pair of dull-colored leg splints carried by Nognar\.|a set of boiled leather leg plates carried by an orcish patrolman\.|a pair of steel-plated pterugees carried by an alert dwarven soldier\.|A maille chausses carried by an earnest squire\.|a pair of etched leg plates in The Dragon's Hoard\.|a pair of steel-plated pterugees carried by an alert human soldier\.|some engraved white greaves carried by a platinum-haired male deep-elf\.|some matted bear's-limb arm bracers carried by a one-eyed female giant\.|a pair of steel-plated pterugees carried by an alert half-elven archer\.|some matted bear's-limb arm bracers carried by a rough-hewn male giant\.|A maille chausses carried by a musclebound man-at-arms\.|a pair of imperial pterugees in A Smuggler's Den\.|a set of polished leg plates carried by Bill Kourney\.|Petrified wood leg guards carried by the warlock\.|A maille chausses carried by a brawny man-at-arms\.|a pair of maille tassets and greaves carried by a Peacekeeper\.|a pair of steel-plated pterugees carried by A human centurion\.|a set of riveted mithril haidate and suneate carried by the Governor\.|a pair of black tanso steel perones carried by a legionnaire corporal\.|a pair of maille tassets and greaves carried by an off-duty Peacekeeper\.|a pair of maille tassets and greaves carried by the guard\.|a pair of steel-plated pterugees carried by A half-elven centurion\.|a pair of maille tassets and greaves carried by a Peacekeeper sentry\.|a pair of imperial pterugees carried by a legionnaire corporal\.|some bloodstained diamond leg guards carried by a hideous blood angel\.|a pair of steel-plated pterugees carried by A dwarven centurion\.|a set of steel leg plates carried by a coliseum legionnaire\.|A maille chausses carried by a fanatical scrutifer\.|Some iron leg shackles in The Hall of Religious Persecution\.|some matted bear's-limb arm bracers carried by a square-jawed male giant\.|a pair of burnished red steel cuisses carried by a knight of Seawatch\.|a pair of steel-plated pterugees carried by a human centurion\.|a pair of devilskin cuisses carried by Lord Florence Trilani\.|a pair of steel-plated pterugees carried by an alert human warlock\.|a pair of battered tanso-steel greaves carried by a stout orcish guard\.|a set of steel leg plates carried by a legionnaire\.|a pair of steel pterugees carried by a legionnaire\.|some matted bear's-limb arm bracers carried by a stern-looking female giant\.|a pair of black sleeves embroidered with the front leg bones of a goat carried by the Grand Lich, Dianambis\.|a pair of leg plates with blacksteel trimmings carried by Duke Stephon von Sander\.|a pair of maille tassets and greaves carried by Havelock the armourer\.|a long bone staff with many spikes carried by a ledge lurker\.|a set of silver-leafed leg plates carried by the crusading high priest\.|some matted bear's-limb arm bracers carried by a crooked-nosed male giant\.|a leg of beef carried by the serving wench\.|a set of boiled leather leg plates carried by a sleepy male orc\.|A roasted griffon leg carried by Ghour\.|some matted bear's-limb arm bracers carried by a bald male giant\.|a pair of mithril plated greaves carried by Aiavi\.|a pair of devilskin cuisses carried by a charcoal-eyed male human\.|some matted bear's-limb arm bracers carried by a short-haired female giant\.|a set of platinum leggings carried by Derk Thoms\.|some matted bear's-limb arm bracers carried by a foul-smelling female giant\.|A leg of the pedestal in A Cold Altar Room\.|Some iron leg shackles in The Water Chamber \.|some matted bear's-limb arm bracers carried by Melkha the Tavernkeep\.|Leg guards wrapped in white-dyed leather carried by a towering male giant\.|a pair of maille tassets and greaves carried by Officer Chirk\.|Some iron leg shackles in The Hall of Insanity\.|A pair of glistening hinged leg greaves carried by Zemar\.|blackened plate leg armor carried by a huge ogre\.|a pair of black pants with the image of the rear leg bones of a goat carried by the Grand Lich, Dianambis\.|The leg of a Peacekeeper sentinel in A Cemetery\.|Some iron leg shackles in The Room of Instruments.|a purple garter belt and stockings carried by a delicate female half-elf.|Leg wraps of material darkness carried by an ancient bone-shaman.|a pair of steel pterugees carried by a powerful legionnaire.|a pair of maille tassets and greaves carried by an elite Peacekeeper.|a pair of frost-covered leg plates carried by a sickly-thin, pale male human.|A roasted griffon leg in A huge underground warehouse.|some matted bear's-limb arm bracers carried by Aze the Frost Giant.|pitch-black leg plates with pyromancy symbols carried by Sir Kourach.|some engraved white greaves carried by a crooked male human\.|Some iron leg shackles in A Foyer of Body Parts\.|a pair of steel leg guards carried by a tattered male human\.|a set of oaken leg plates surrounded by Wailing Spirits carried by you\.|a set of steel leg plates carried by a gray-haired legionnaire\.|a leg of beef carried by Nakato\.|some engraved white greaves carried by a crooked male human\.|some matted bear's-limb arm bracers carried by Sh'na\.|a pair of maille tassets and greaves carried by an elite Peacekeeper\.|A roasted griffon leg in A neatly-ordered store room\.|a leg of lamb in Meat Storage Room\.|leg guards made of swirling shadows in An Underground Chamber\.|a pair of wolf-engraved leg plates carried by Losquez the half-wolf\.|some leg plates of sculpted stone in Broad, gently sloping mountains\.|Some iron leg shackles in The Room of Wicked Imagination\.|some reinforced steel leg plates carried by Rowyn Silversmith\.|a pair of engraved leg plates carried by a death knight\.|some bright lacquered leg plates carried by the Weaponmaster\.|a set of mithril leg plates carried by Ithrok Gaz\.|a pair of ornately-inscribed pterugees carried by Legate Furious Camillus\.|some etched chausses and shynbalds carried by a deep-elven hellion\.|a set of hoof and leg guards carried by a giant dragon-turtle\.|bronze-studded leather arm guards carried by a tattered male human\.|a set of trimmed steel vambraces carried by a half-elven competitor\.|some green-plated arm guards carried by a knight of Sai Baba\.|a pair of steel armilla carried by an alert dwarven soldier\.|an engraved vambrace of mithril carried by Nebelle\.|some iron arm shackles in The Hall of Sensory Assault\.|some iron arm shackles in A Foyer of Body Parts\.|pitch-black arm plates with pyromancy symbols carried by Sir Kourach\.|A pair of steel arm guards carried by a large Salvarian\.|a pair of steel armilla carried by a human centurion\.|A pair of steel rerebraces carried by a musclebound man-at-arms\.|some coiled arm guards carried by an eerie female orc\.|a set of filigree arm cuffs carried by Caroline Toussaint\.|a pair of red metal bracers carried by a mercenary\.|some iron arm shackles in The Hall of Religious Persecution\.|a pair of gaping maul arm plates carried by Losquez the half-wolf\.|vambraces made of pure light carried by a stoic male human\.|arm-length, silky purple gloves carried by Linalla the clothier\.|A pair of steel rerebraces carried by an earnest squire\.|a pair of steel armilla carried by A dwarven centurion\.|a key-shaped skeleton's arm in the deep earth\.|a pair of bronze arm guards, crested with large feathers carried by a blood-splattered male giant\.|a pair of decorative mithril arm chains in At the End of the Trail\.|a pair of dented red bracers carried by a gruff male bakemono\.|a pair of spiked munnions carried by Orderic Greyhawk\.|A pair of steel arm guards carried by a stocky male Salvarian\.|a pair of steel armilla carried by a powerful legionnaire\.|a pair of hemp Hammer arm bands in A Hallway\.|a pair of steel armilla carried by an alert human warlock\.|a pair of etched silver arm shields carried by an elven pilgrim\.|a pair of decorated armilla carried by a legionnaire corporal\.|a pair of steel armilla carried by an alert human soldier\.|a pair of steel armilla carried by A half-elven centurion\.|A pair of steel arm guards carried by a skinny male Salvarian\.|a pair of burnished, white-iron rerebraces carried by Istfenir Sa'antil\.|A pair of steel rerebraces carried by a brawny man-at-arms\.|some scaled arm bracers carried by the deep-elf scout\.|A pair of engraved white arm guards carried by a platinum-haired male deep-elf\.|A pair of dull-colored arm splints carried by Nognar\.|a pair of red metal bracers in A stone chamber\.|A pair of steel rerebraces carried by a fanatical scrutifer\.|some iron arm shackles in The Water Chamber \.|a pair of steel armilla carried by a centaur centurion\.|a pair of steel armilla carried by an alert half-elven archer\.|a pair of steel armilla carried by a legionnaire\.|a pair of steel armilla carried by A human centurion\.|a pair of silver Hammer arm plates in A Hallway\.|some spiked arm bracers carried by Kul Mrak\.|blackened arm plate armor carried by a huge ogre\.|a pair of mithril plated spaulders carried by Aiavi\.|a set of oaken arm plates surrounded by Wailing Spirits carried by you\.|some iron arm shackles in The Hall of Insanity\.|a pair of dented red bracers carried by a stocky male bakemono\.|A pair of steel arm guards carried by a wrinkly female Salvarian\.|a pair of steel armilla in A Smuggler's Den\.|a set of trimmed steel vambraces carried by a failed squire\.|a pair of pitch-black arm tiedowns carried by Eikichi\.|a set of arm guards of black iron carried by a rezgaloth\.|Arm guards wrapped in white-dyed leather carried by a towering male giant\.|a black stone left arm, giant-sized in A storage room\.|a pair of red metal bracers in A dark recess\.|some iron arm shackles in The Room of Wicked Imagination\.|the chieftain's mithril arm plates carried by the halfling chieftain\.|a set of finely crafted arm plates of black steel carried by a dark knight\.|a pair of ornately-inscribed armilla carried by Legate Furious Camillus\.|a pair of bronze arm guards, crested with large feathers carried by a giant legionnaire\.|A pair of engraved white arm guards carried by a crooked male human\.|a pair of polished white wyrm vambraces carried by Chieftain Nal'ren\.|the bones of a humanoid arm carried by a necromancer\.|a pair of spiked munnions carried by Cole\.|a moldering skeleton in Under the murky water\.|a pair of bleached adamantite gardebras carried by Sir Terramir\.|a set of trimmed steel vambraces carried by a centaur charioteer\.|a pair of splinted jade arm guards carried by Jaerth\.|a pair of dented red bracers carried by a gangly male bakemono\.|arm wraps made of swirling shadows in An Underground Chamber\.|a set of arm shields carried by a snaggle-toothed male orc\.|a red-feathered pair of arm wraps carried by a muscular male human\.|a set of polished arm guards carried by Bill Kourney\.|a pair of decorative mithril arm chains carried by Shaosran\.|The Rings of Eternal Power carried by the Guardian of Balance\.|a pair of burnished, white-iron rerebraces carried by Cyden\.|a set of masterfully-crafted kote carried by an enormous male dwarf\.|some iron arm shackles in The Room of Instruments\.|A pair of ornamental arm bangles carried by a chubby female human\.|a pair of dented red bracers carried by a bulky male bakemono\.|a baby-bear's head sword-catcher carried by Sh'na\.|A pair of steel rerebraces carried by a fanatical scrutifer\.|The brain of a humanoid carried by an illithid merchant\.|a silver wand tipped with a tiny carved brain carried by a fair-skinned male human teacher\.|half of a centaur's brain carried by a venerable griffoness.|a silver wand tipped with a tiny carved brain carried by a pot-bellied female half-elf teacher\.|a crayfish claw carried by Suli the water-song\.|A landsknecht with a raven's claw grip carried by Starkerarm\.|the Long Claw carried by Qul'xon Talonthrust\.|Some silver claw clippers carried by a young male griffon\.|a blue-tinted claw with three straight blades carried by a scarred male human\.|a coiled thrashing claw carried by a black-furred griffon\.|A Wyrsa's claw carried by the old hermit, Stryfe\.|a blue-tinted claw with three straight blades carried by a small male human\.|a set of pale blue griffon claw spikes carried by a large male griffon\.|a medallion bearing a griffon claw crest carried by a griffon mother\.|a dark blue rattle made of a koonac claw carried by an old and wrinkled male bakemono\.|a blue-tinted claw with three straight blades carried by a hunchbacked male human\.|A landsknecht with a raven's claw grip carried by a knight of Seawatch.|a visored helm crested with swan feathers carried by Baltus\.|Tattered slave's rags carried by a demure gnomish woman\.|a hardened wolf's head cap carried by a sentry scout\.|an etched jade asp's head saber carried by a deep elf guard\.|a pair of hardened bear's head gloves carried by Iolak\.|a pair of hardened wolf's head gloves carried by a horsebowman\.|a pair of hardened wolf's head leggings carried by a skirmisher\.|a hollowed-out bear head carried by a bulbous-nosed male giant\.|a hardened bear's head belt carried by the fletcher\.|a pair of hardened bear's head leggings carried by a sentry scout\.|an etched jade asp's head main gauche carried by a deep elf guard\.|A Sophus-Crafted Glaive carried by a large male Sophus\.|a hollowed-out bear head carried by a one-eyed female giant\.|a head wrapping of silver fox fur carried by Clawell\.|the jade serpent's head in A Small, Clammy Hollow\.|a mithril bracelet with a lion's head emblem carried by Amelthiel V'irlandar\.|a pair of hardened wolf's head boots carried by a skirmisher\.|a hardened wolf's head vest carried by a horsebowman\.|a hollowed-out bear head carried by a rigid female giant\.|a pair of hardened bear's head gloves carried by a sentry scout\.|a boiled sheep's head in The Marfikian Mission's Give-a-Way Shop\.|a broad-bladed iron voulge carried by a large male griffon\.|rock-studded belt with a lion's head buckle carried by a bulky male dwarf\.|a twisted jade asp head sceptre carried by Aettryna Darnek\.|a pitch-black helm with pyromancy symbols carried by Sir Kourach\.|a hardened bear's head belt carried by Iolak\.|a hardened wolf's head belt carried by a horsebowman\.|a pair of hardened wolf's head gloves carried by a skirmisher\.|a hardened wolf's head belt carried by Manwanis\.|Tattered slave's rags carried by a dark-eyed slave child\.|a pair of hardened wolf's head leggings carried by a horsebowman\.|a hardened wolf's head cap carried by a skirmisher\.|a boiled rat's head carried by Jahrney the scrawny\.|Tattered slave's rags carried by a wiry slave child\.|a hardened wolf's head cap carried by a horsebowman\.|a thick gold band decorated with a lions head carried by an elderly male sprite\.|a hardened wolf's head belt carried by a skirmisher\.|the dripping, dismembered head of a horned demon carried by a prince of light\.|a head of lettuce in Field\.|Tattered slave's rags carried by a dull-eyed half-elf\.|a visored helm crested with swan feathers carried by a Peacekeeper cadet\.|a hollowed-out bear head carried by a gargantuan male giant\.|a pair of hardened bear's head boots carried by a sentry scout\.|a bear's head chestplate carried by a towering male giant\.|a visored helm crested with swan feathers carried by a Peacekeeper sentinel\.|a pair of hardened wolf's head sleeves carried by a horsebowman\.|a visored helm crested with swan feathers carried by a street sweeper\.|a pair of hardened bear's head boots carried by the fletcher\.|a pair of hardened wolf's head boots carried by a horsebowman\.|a mithril bracelet with a lion's head emblem carried by Bumbles Crooknose\.|a visored helm crested with swan feathers carried by a Peacekeeper\.|a steel coolus and focale carried by a legionnaire.|a bear's head chestplate carried by a square-jawed male giant\.|Tattered slave's rags carried by a delicate slave woman\.|a hollowed-out bear head carried by Sh'na\.|a bear's head chestplate carried by Sh'na\.|a mithril bracelet with a lion's head emblem carried by Schmuzkin Sorethumbe\.|a steel coolus and focale carried by a powerful legionnaire\.|Tattered slave's rags carried by a dwarven slave-warrior\.|rock-studded belt with a lion's head buckle carried by the armorer\.|a bear's head chestplate carried by a one-eyed female giant\.|a hollowed-out bear head carried by a short-haired female giant\.|a hardened bear's head cap carried by Iolak\.|Tattered slave's rags carried by a nimble halfling girl\.|a head of lettuce in The Center of the Uxmaln Library\.|a visored helm crested with swan feathers carried by Ferdinand Lionheart\.|a broad-bladed iron voulge carried by a towering male human\.|a scale wimple and mesh veil carried by a deep-elven priestess\.|a pair of hardened wolf's head sleeves carried by the old man\.|a hardened bear's head vest carried by a sentry scout\.|a hardened bear's head belt carried by a sentry scout\.|a hollowed-out bear head carried by Aze the Frost Giant\.|a splinted asp's head breastplate carried by Naedron Darnek\.|a death's-head key carried by a bone devil\.|a mithril bracelet with a lion's head emblem carried by Charles Horn\.|a pair of hardened wolf's head sleeves carried by a skirmisher\.|Tattered slave's rags carried by a grim slave woman\.|a giant ceramic head of garlic carried by Eilwen.|a bear's head chestplate carried by a short-haired female giant\.|a mithril bracelet with a lion's head emblem carried by Bertha Gloifkin\.|a larchwood cane topped with a shrunken head carried by a blind gnomish hag\.|a mithril bracelet with a lion's head emblem carried by Jarcar Thunderwing\.|a pair of hardened wolf's head gloves carried by a sentry scout\.|a pair of hardened bear's head gloves carried by the fletcher\.|a bear's head chestplate carried by a pallid male giant\.|a bear's head chestplate carried by a gargantuan male giant\.|a hardened bear's head vest carried by Iolak\.|A broad-head spear carried by Barthem\.|The head of a kobold elementalist in An undulating tunnel\.|a hollowed-out bear head carried by a foul-smelling female giant\.|a plated asp's head helm carried by Naedron Darnek\.|a hollowed-out bear head carried by a pallid male giant\.|Tattered slave's rags carried by a plump human child\.|a hardened wolf's head vest carried by a skirmisher.|a bear's head chestplate carried by Aze the Frost Giant\.|a head of cauliflower carried by the elderly woman\.|a pair of hardened bear's head leggings carried by the fletcher\.|a bear's head chestplate carried by a bald male giant\.|a hardened bear's head cap carried by a sentry scout\.|a mithril bracelet with a lion's head emblem carried by Erika Nevahr\.|a mithril bracelet with a lion's head emblem carried by Phineus Macleod\.|a hardened wolf's head belt carried by a sentry scout\.|a pair of hardened bear's head sleeves carried by a sentry scout\.|a pair of hardened bear's head sleeves carried by the fletcher\.|a hollowed-out bear head carried by a square-jawed male giant\.|a pair of hardened bear's head boots carried by Iolak\.|a pair of hardened bear's head leggings carried by Iolak.|a bear's head chestplate carried by a bulbous-nosed male giant\.|a hardened wolf's head belt carried by the old man\.|the head of a snake carried by Yuric Borijof\.|a tiger's head shuang duan ji carried by Yefeng\.|a visored helm crested with swan feathers carried by Quetine\.|A streamered pike crowned with a mummified head carried by a headless undead standard-bearer\.|a hardened bear's head vest carried by the fletcher\.|a visored helm crested with swan feathers carried by a taslamaran celador\.|a pair of hardened wolf's head boots carried by a sentry scout\.|Tattered slave's rags carried by a wretched male halfling.|a hollowed-out bear head carried by Sverk\.|a hollowed-out bear head carried by a bald male giant\.|a hardened bear's head cap carried by the fletcher\.|a bear's head chestplate carried by a rough-hewn male giant\.|a pair of hardened wolf's head boots carried by Manwanis\.|an etched jade asp's head main gauche carried by a deep elf guard.|a crested hoplite helm carried by Boden\.|a bear's head chestplate carried by a foul-smelling female giant\.|a pair of hardened wolf's head leggings carried by a sentry scout.|a head of lettuce carried by Lura Hoos\.|a pair of hardened wolf's head sleeves carried by a sentry scout\.|The head chopper carried by an adamantite golem\.|a pair of hardened wolf's head leggings carried by Manwanis.|a visored helm crested with swan feathers carried by Gervais\.|a hardened wolf's head vest carried by a sentry scout\.|a visored helm crested with swan feathers in The Peacekeeper Armoury.|a mithril bracelet with a lion's head emblem carried by Milly Moondust\.|a bright feathered headdress carried by Taaril D'Astae.|a leafy angel's wing plant carried by a swamp dragon\.|An eyeball of a straw dummy in The Void\.|The foot of a straw dummy in The Void\.)$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+</send>
+  </trigger>
+	<trigger
+   enabled="n"
+   group="locateTrigger"
+   match="^(a mithril wristband decorated with a fox's tail carried by a savage Adherent\.|The tail of an old blue dragon carried by Paeru\.|The tail of a green dragon carried by Paeru\.|a fishtail necklace carried by A quiet elf\.|a fried rat tail carried by Jahrney the scrawny\.|a mithril wristband decorated with a fox's tail carried by a pustulant gnomish deaconess\.|a mithril wristband decorated with a fox's tail carried by a headless undead standard-bearer\.|a mithril wristband decorated with a fox's tail carried by a rite-scarred shaman\.|a green lizard tail carried by a chubby female human\.|The tail of a waterscale dragon carried by Paeru\.|a coiled salamander tail carried by a tanned male half-elf\.|A desert lizard's tail carried by Mardwick\.|the tuft from a black lion's tail carried by Unlucky Lion\.|a coiled salamander tail carried by a plain male human\.|a mithril wristband decorated with a fox's tail carried by a decomposing frost giant\.|a mithril wristband decorated with a fox's tail carried by a hollow-eyed mercenary\.|The tail of an ancient red dragon in The Blasted Fields\.|a mithril wristband decorated with a fox's tail carried by a wailing ghoulish warskald\.|a mithril wristband decorated with a fox's tail carried by an ardent deep-elven Bonewarden\.|a shield emblazoned with a fox's tail carried by a clanmarked former guardsman\.|a motley fool's outfit with a mule's tail carried by a jester-costumed human\.|a mithril wristband decorated with a fox's tail carried by a gangly termagent\.|a coiled salamander tail carried by a lean male bakemono\.|an imprinted leather and steel-scaled belt carried by a clanmarked former guardsman\.|a horned helm carried by a tall male human\.|a horned helm carried by a goateed male human\.|a green painted horn carried by a brunette filly\.|a black painted horn carried by a blonde filly\.|a green painted horn carried by Fenaal D'Astae\.|a souvenir unicorn horn carried by a male half-elf \.|an intricately engraved war horn carried by a hearty female halfling\.|A large painted horn carried by a dwarven merchant\.|a golden-trimmed elven horn carried by a royal bugler\.|The horn of a large cow carried by Sharlzf, the barkeep\.|a horned helm carried by a disfigured male human\.|a horned helm carried by an overweight female human\.|a horned helm carried by Iliiki the Battle-mad\.|a horned helm carried by Wyn Haakon\.|the horn of a ki-rin in The Depository for the Horns of the Ki-rin\.|a horned helm carried by a hunchbacked male human\.|a horned helm carried by a Fox Tribe Smokedancer\.|a horned helm carried by a scarred male human\.|a spicy chocolate ram's horn, brimming with flan carried by the waitress\.|a horned helm carried by a heavyset male human\.|a red painted horn carried by a brunette filly\.|A ram's horn carried by Sharlzf, the barkeep\.|The horn of a greater devil in A drafty stone structure\.|a golden-trimmed elven horn carried by an elven bugler\.|a horned helm carried by Trivis the Tavernkeep\.|a green painted horn carried by a blonde filly\.|a red painted horn carried by a blonde filly\.|a curved pipe made from a ram's horn carried by a barge captain\.|a spicy chocolate ram's horn, brimming with flan in The Viewing Area\.|An engraved piece of horn carried by Moloric\.|a horned helm carried by a small male human\.|a drinking horn carried by Clawell\.|The horn of a large cow in A drafty stone structure\.|The horn of a greater devil carried by Sharlzf, the barkeep\.|a black painted horn carried by a brunette filly\.|the hollowed horn of a deep dragon carried by a fierce mermaid guard\.|a horned helm carried by a bald male human\.|a horned helm carried by a dwarf-like male human\.|a horned helm carried by a small female human\.|a mermaid's shell horn in Radi Kenga's Chamber of Riches\.|a horned helm carried by a tall female human\.|a horned helm carried by an agile female human\.|a curved hunting horn carried by Clawell\.|the hollowed horn of a deep dragon carried by a callous merman guard\.|a curved hunter's horn carried by a sylvan tracker\.|a corpse of an ogre in The Ch'zzrym slums\.|a corpse of a script mob in A supply Room\.)$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+</send>
+  </trigger>
+  
+  <trigger
+   enabled="y"
+   match="^You utter the words\, \'hiqahz abyzqh\'\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>SetVariable("locateItem", "")
+  SetVariable("locateEnd", "false")
+  DoAfterSpecial(3, 'locateQueueTrigger(-1)', 12)
+  </send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="IdentifyOutput"
+   match="You utter the words\, \'hiqahz abyzqh\'\."
+   multi_line="y"
+   lines_to_match="100"
+   regexp="y"
+   script="colorOutput"
+   sequence="200"
+  >
+  </trigger>
+</triggers>
+<aliases>
+  <alias
+   match="^lcn$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>function rtrim(s)
+  local n = #s
+  while n &gt; 0 and s:find("^%s", n) do n = n - 1 end
+  return s:sub(1, n)
+end
+
+outputArray = {}
+outputArray[1] = ""
+longestParse = GetVariable("locateItem") or ""
+
+if longestParse ~= "" then
+   arrayIndex = 1
+   splitString = string.gsub(longestParse, "vs.", "vs")
+   for i in string.gmatch(splitString, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+         Note("'" .. trimString .. ".")
+      end 
+   end
+end</send>
+  </alias>
+  <alias
+   match="^lco$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+
+longestParse = GetVariable("locateItem") or ""
+
+if longestParse ~= "" then
+   arrayIndex = 1
+   splitString = string.gsub(longestParse, "vs.", "vs")
+   for i in string.gmatch(splitString, "[^%.]+") do
+      trimString = (i:gsub("^%s*", ""))
+      if trimString ~= "" then
+         Send("'" .. trimString .. ".")
+      end 
+   end
+end</send>
+  </alias>
+  
+  <alias
+   match="^limb1$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' corpse")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb2$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' wing")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb3$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' eyeball")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb4$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' finger")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb5$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' brain")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb6$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' guts")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb7$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' foot")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb8$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' heart")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb9$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' claw")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb10$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' horn")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb11$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' tail")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb12$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' hand")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb13$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' head")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb14$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' leg")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+  <alias
+   match="^limb15$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+	<send>
+		Send("c 'locate' arm")
+		locateQueueTrigger(1)
+	</send>
+  </alias>
+</aliases>
+
+<script>
+<![CDATA[
+
+function OnPluginInstall()
+	SetVariable("locateQueue", "0")
+end
+
+function getSKColor(colorCode)
+   color = ""
+   if colorCode == 12632256 then
+     color = "$7"
+   elseif colorCode == 16748574 then 
+     color = "$1$I"
+   elseif colorCode == 14772545 then 
+     color = "$1"
+   elseif colorCode == 8421376 then 
+     color = "$3"
+   elseif colorCode == 8388736 then 
+     color = "$5"
+   elseif colorCode == 16776960 then 
+     color = "$3$I"
+   elseif colorCode == 255 then 
+     color = "$4$I"
+   elseif colorCode == 8421504 then 
+     color = "$0$I"
+   elseif colorCode == 16777215 then 
+     color = "$7$I"
+   elseif colorCode == 32768 then 
+     color = "$2"
+   elseif colorCode == 65535 then 
+     color = "$6$I"
+   elseif colorCode == 65280 then 
+     color = "$2$I"
+   elseif colorCode == 16711935 then 
+     color = "$5$I"
+   elseif colorCode == 32896 then 
+     color = "$6"
+   elseif colorCode == 128 then
+     color = "$4"
+   else 
+     color = "$A"
+   end
+   return color
+end
+
+function colorOutput (name, line, wildcards, styles)
+    locateEnd = GetVariable("locateEnd") or "false"
+	compiledLocate = GetVariable("locateItem") or ""
+	if line == "" or string.find(line, "^%(C%)ontinue") then
+	   locateEnd = true
+	   SetVariable("locateEnd", "true")
+	end
+	
+	if locateEnd == "false" then 
+       for _, v in ipairs (styles) do
+	      if v.text == "" then
+	         endLine = true
+	      end 
+	  
+	      if not endLine then
+			compiledLocate = compiledLocate .. getSKColor(v.textcolour)
+			compiledLocate = compiledLocate .. v.text
+          end
+	   end
+	end
+	SetVariable("locateItem", compiledLocate .. " ")
+end
+
+function locateQueueTrigger(numberOfLocate)
+	locateQueue = tonumber(GetVariable("locateQueue"))
+	locateQueue = locateQueue + numberOfLocate
+	if locateQueue < 0 then
+		locateQueue = 0
+		EnableTriggerGroup("locateTrigger", false)
+	elseif locateQueue == 0 then
+		EnableTriggerGroup("locateTrigger", false)
+	else
+		EnableTriggerGroup("locateTrigger", true)
+	end
+	SetVariable("locateQueue", locateQueue)
+end
+
+]]>
+</script>
+
+
+</muclient>

@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_Enchant_Counter_Final"
+   author="Aello"
+   id="1111111111111111C11111AC"
+   language="Lua"
+   purpose="Keeps track of how many runes on an item"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Displays a counter for each time you enchant
+
+Will automatically recognize when your enchanting something
+
+type reset alias to reset the counter manually
+]]>
+</description>
+
+</plugin>
+
+<!--  Triggers  -->
+
+<triggers>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="You utter the words, '(qaigzqgruhz uhzw|qaigzqgruhz xzasai|qaigzqgruhz abrazak|unsoqpaih uhzw|unsoqpaih abrazak|unsoqpaih xzasai)'.\n(.+) (shimmers with a gold aura.|glows a brilliant gold!|glows blue.|glows a brilliant blue!)$"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>enchantStatus = GetVariable("enchantStatus") or 0
+xyz = GetVariable("enchantCounter") or 0
+item = GetVariable("enchantedItem") or ""
+enchantType = "%3"
+enchantedItem = "%2"
+if enchantedItem ~= item then
+   xyz = 0
+end
+if enchantType == "glows blue." or enchantType == "shimmers with a gold aura." then
+   xyz = xyz + 1
+else
+   xyz = xyz + 2
+end
+Note ("Item Enchanted: " .. xyz .. " runes")
+SetVariable("enchantCounter", xyz)
+SetVariable("enchantedItem", enchantedItem)
+if enchantStatus == "1" then
+   Execute ("enchant run")
+end</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="You utter the words, '(qaigzqgruhz uhzw|qaigzqgruhz xzasai|qaigzqgruhz abrazak|unsoqpaih uhzw|unsoqpaih abrazak|unsoqpaih xzasai)'.\n(.+) (shivers violently and explodes!|flares blindingly and evaporates!)"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>enchantStatus = GetVariable("enchantStatus") or 0
+SetVariable("enchantCounter", 0)
+Execute ("enchant clear")
+if next(enchantQueue) ~= nil then
+  itemPop = table.remove(enchantQueue, 1)
+  Note("Current Item Exploded.  Initiating: " .. itemPop)
+  Execute(itemPop)
+else
+  Note ("Item Enchanted: 0 runes (Destroyed)")
+  Note("Enchant Completed")
+end
+
+</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   match="(You are not holding that.|That isn't an enchantable item.|You have no knowledge of that spell!)"
+   regexp="y"
+   send_to="12"
+  >
+  <send>Execute("enchant clear")</send>
+  </trigger>  
+  
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="You utter the words, '(qaigzqgruhz uhzw|qaigzqgruhz xzasai|qaigzqgruhz abrazak|unsoqpaih uhzw|unsoqpaih abrazak|unsoqpaih xzasai)'.\n(.+) glows brightly but then fades."
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>enchantStatus = GetVariable("enchantStatus") or 0
+SetVariable("enchantCounter", 0)
+Note ("Item Enchanted: 0 runes (Faded)")
+if enchantStatus == "1" then
+   Execute ("enchant run")
+end</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="You utter the words, '(qaigzqgruhz uhzw|qaigzqgruhz xzasai|qaigzqgruhz abrazak|unsoqpaih uhzw|unsoqpaih abrazak|unsoqpaih xzasai)'.\nNothing seemed to happen."
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>enchantStatus = GetVariable("enchantStatus") or 0
+xyz = GetVariable("enchantCounter") or 0
+Note ("Item Enchanted: " .. xyz .. " runes (Resisted)")
+if enchantStatus == "1" then
+   Execute ("enchant run")
+end</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="You utter the words, '(qaigzqgruhz uhzw|qaigzqgruhz xzasai|qaigzqgruhz abrazak|unsoqpaih uhzw|unsoqpaih abrazak|unsoqpaih xzasai)'.\nYou failed."
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>enchantStatus = GetVariable("enchantStatus") or 0
+xyz = GetVariable("enchantCounter") or 0
+Note ("Item Enchanted: " .. xyz .. " runes (Spell Failure)")
+if enchantStatus == "1" then
+   Execute ("enchant run")
+end
+</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="SKEnchantGroup"
+   expand_variables="y"
+   lines_to_match="1"
+   match="^(You feel an effervescent energy dissipate into your dreams|The comforts of the inn put you at ease)\.$"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>enchantStatus = GetVariable("enchantStatus") or 0
+enchantInn = GetVariable("enchantInn") or 0
+EnableTriggerGroup("SKEnchantGroup", 0)
+DoAfterSpecial(1, 'EnableTriggerGroup("SKEnchantGroup", 1)', sendto.script)
+if enchantStatus == "1" and enchantInn == "1" then
+   SetVariable("enchantInnCounter", 0)
+   Send("stand")
+   if "%1" == "You feel an effervescent energy dissipate into your dreams" then
+      Send("trance")
+   end
+   Execute ("enchant run")
+end</send>
+  </trigger>
+</triggers>
+
+<aliases>
+  <alias
+   match="^ecqc$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>enchantQueue = {}
+Note("Enchant Queue Cleared")</send>
+  </alias>
+
+  <alias
+   match="^ecq (csa|csi|csw|eci|ecw|eca) ([a-zA-Z\.0-9]+) ([a-zA-Z]+\-?\w*) ([0-9]+[\-]?[0-9]?)(?: ?)([0-1]?)(?: ?)([0-4]?)$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+table.insert(enchantQueue, Trim("%1 %2 %3 %4 %5 %6"))
+Note("Item added to queue: " .. Trim("%1 %2 %3 %4 %5 %6"))</send>
+  </alias>
+  
+  <alias
+   match="^ecq .*$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="41"
+  >
+  <send>Note("Invalid enchant syntax")</send>
+  </alias>
+  
+  <alias
+   match="^ecs$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+if next(enchantQueue) ~= nil then
+  Note("Current Queue:")
+  for i,v in ipairs(enchantQueue) do print(i .. ":  " .. v) end
+else
+  Note("Queue Empty")
+end</send>
+  </alias>
+ 
+  <alias
+   match="^ecd$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+if next(enchantQueue) ~= nil then
+  itemPop = table.remove(enchantQueue, 1)
+  Note("Enchant Queue Deleted: " .. itemPop)
+else
+  Note("Queue Empty")
+end</send>
+  </alias>
+  <alias
+   match="^ecn$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+enchantCounter = GetVariable("enchantCounter")
+SetVariable("enchantLimit", enchantCounter)
+Note("Skipping current enchant")
+</send>
+  </alias>
+  <alias
+   match="^enchant run$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>enchantStatus = GetVariable("enchantStatus") or 0
+enchantCounter = GetVariable("enchantCounter") or 0
+enchantCommand = GetVariable("enchantCommand")
+enchantItem = GetVariable("enchantItem")
+enchantType = GetVariable("enchantType")
+enchantLimit = GetVariable("enchantLimit")
+enchantInn = GetVariable("enchantInn")
+enchantInnCounter = GetVariable("enchantInnCounter") or 0
+
+enchantSplitTypeFirst = GetVariable("enchantSplitTypeFirst") or ""
+enchantSplitTypeSecond = GetVariable("enchantSplitTypeSecond") or ""
+enchantSplitCountFirst = GetVariable("enchantSplitCountFirst") or 0
+enchantSplitCountSecond = GetVariable("enchantSplitCountSecond") or 0
+
+if enchantInn == "1" and tonumber(enchantInnCounter) > 3 and tonumber(enchantStatus) == 1 then
+   Send("sleep")
+   enchantInnCounter = 0
+   SetVariable("enchantInnCounter", 0)
+elseif tonumber(enchantCounter) &lt; tonumber(enchantLimit) and tonumber(enchantStatus) == 1 then
+   if enchantSplitTypeFirst ~= "" and enchantSplitTypeSecond ~= "" and tonumber(enchantSplitCountFirst) ~= 0 and tonumber(enchantSplitCountSecond) ~= 0 then
+      if tonumber(enchantCounter) &lt; tonumber(enchantSplitCountFirst) then
+	     enchantType = enchantSplitTypeFirst
+      elseif tonumber(enchantCounter) >= tonumber(enchantSplitCountFirst) then
+	     enchantType = enchantSplitTypeSecond
+      end  
+   end  
+   Send(enchantCommand .. " " .. enchantItem .. " " .. enchantType)
+   if enchantInn == "1" then
+      enchantInnCounter = enchantInnCounter + 1
+   end	  
+elseif tonumber(enchantCounter) >= tonumber(enchantLimit) and tonumber(enchantStatus) == 1 then
+	if next(enchantQueue) == nil then
+	   Execute ("enchant clear")
+	   Note("Enchant Completed")
+	else
+		Execute("enchant clear")
+		itemPop = table.remove(enchantQueue, 1)
+		Note("Current Item Completed.  Initiating: " .. itemPop)
+		Execute(itemPop)
+	end
+end
+SetVariable("enchantInnCounter", enchantInnCounter)</send>
+  </alias>
+  
+  <alias
+   match="^(csa|csi|csw|eci|ecw|eca) ([a-zA-Z\.0-9]+) ([a-zA-Z]+\-?\w*) ([0-9]+[\-]?[0-9]?)(?: ?)([0-1]?)(?: ?)([0-4]?)$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+enchantStatus = GetVariable("enchantStatus") or 0
+
+if enchantStatus == "1" then
+	Execute("ecq " .. Trim("%1 %2 %3 %4 %5 %6"))
+else
+	enchantCommand = ""
+	enchantItem = "%2"
+	enchantType = "%3"
+	enchantLimit = "%4"
+	enchantSplit = ""
+	enchantInnCounter = 0
+	enchantInn = 0
+	if "%1" == "csa" then
+	   enchantCommand = "c 'consecrate armor'"
+	elseif "%1" == "csi" then
+	   enchantCommand = "c 'consecrate item'"
+	elseif "%1" == "csw" then
+	   enchantCommand = "c 'consecrate weapon'"
+	elseif "%1" == "eci" then
+	   enchantCommand = "c 'enchant item'"
+	elseif "%1" == "ecw" then
+	   enchantCommand = "c 'enchant weapon'"
+	elseif "%1" == "eca" then
+	   enchantCommand = "c 'enchant armor'"
+	end
+	if "%5" == "1" then
+	   enchantInn = 1
+	end
+	if "%6" ~= "" then
+	   enchantInnCounter = 4 - tonumber("%6")
+	else
+	   tickTime = GetPluginVariable ("7e2bf8628a8f51bf2115d2f0", "tickTime") or 0
+	   enchantInnCounter = 4 - math.floor((60 - tonumber(tickTime)) / 14.5)
+	end
+
+	SetVariable("enchantStatus", 1)
+	SetVariable("enchantCounter", 0)
+	SetVariable("enchantCommand", enchantCommand)
+	SetVariable("enchantItem", enchantItem)
+	SetVariable("enchantType", enchantType)
+	if string.match(enchantType, "-") ~= nil then
+	  enchantSplitTypeFirst, enchantSplitTypeSecond = string.match(enchantType, "(.*)%-(.*)")
+	  enchantSplitCount = enchantLimit
+	  enchantSplitCountFirst, enchantSplitCountSecond = string.match(enchantSplitCount, "(.*)%-(.*)")
+	  enchantLimit = tonumber(enchantSplitCountFirst) + tonumber(enchantSplitCountSecond)
+	  SetVariable("enchantSplitTypeFirst", enchantSplitTypeFirst)
+	  SetVariable("enchantSplitTypeSecond", enchantSplitTypeSecond)
+	  SetVariable("enchantSplitCountFirst", enchantSplitCountFirst)
+	  SetVariable("enchantSplitCountSecond", enchantSplitCountSecond)
+	end
+
+	SetVariable("enchantLimit", enchantLimit)
+	SetVariable("enchantInn", enchantInn)
+	SetVariable("enchantInnCounter", enchantInnCounter)
+	Execute ("enchant run")
+end
+  </send>
+  </alias>
+
+  <alias
+   match="^(csa|csi|csw|eci|ecw|eca).*$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="41"
+  >
+  <send>ColourNote("red", "black", "Invalid enchant command")
+  </send>
+  </alias>
+  
+  <alias
+   match="^enchant off$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+Execute("enchant clear")
+Note("Enchant off")
+  </send>
+  </alias>
+
+  <alias
+   match="^enchant clear$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+  SetVariable("enchantStatus", 0)
+  SetVariable("enchantCounter", 0)
+  SetVariable("enchantInn", 0)
+  SetVariable("enchantInnCounter", 0)
+  SetVariable("enchantSplitTypeFirst", "")
+  SetVariable("enchantSplitTypeSecond", "")
+  SetVariable("enchantSplitCountFirst", 0)
+  SetVariable("enchantSplitCountSecond", 0)
+  </send>
+  </alias> 
+  
+  <alias
+   match="^enchant ([0-9]+)$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>SetVariable("enchantLimit", "%1")
+  Note("Enchant Limit: %1")
+  </send>
+  </alias>
+  
+  <alias
+   match="^enchant pause$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>SetVariable("enchantStatus", "0")
+  Note("Enchant Paused")
+  </send>
+  </alias>
+  
+  <alias
+   match="^enchant resume$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>SetVariable("enchantStatus", "1")
+  tickTime = GetPluginVariable ("7e2bf8628a8f51bf2115d2f0", "tickTime") or 0
+  enchantInnCounter = 4 - math.floor((60 - tonumber(tickTime)) / 14.5)
+  SetVariable("enchantInnCounter", enchantInnCounter)
+  Execute("enchant run")
+  Note("Enchant Resumed")
+  </send>
+  </alias>
+  
+  
+  <alias
+   match="^enchant force (1|2|3|4)$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+  Note("Enchant Forced")
+  SetVariable("enchantInnCounter", 4 - tonumber("%1"))
+  Send("stand")
+  Execute ("enchant run")
+  </send>
+  </alias>
+  <alias
+   match="^enchant$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+  Note("Enchant/Consecrate Information")
+  Note("Priest:   acc dam ap mp str con wis fort will health move")
+  Note("Sorceror: acc spd ap mr dex int cha ref will mana move")
+  </send>
+  </alias>
+</aliases>
+
+<script>
+<![CDATA[
+enchantQueue = {}
+
+
+]]>
+</script>
+
+
+</muclient>

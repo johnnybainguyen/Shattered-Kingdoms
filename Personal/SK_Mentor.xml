@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_Mentor"
+   author="Aello"
+   id="1ABC1111111A1B11111C111B"
+   language="Lua"
+   purpose="Mentoring Plugin"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Goes down the list to mentor
+]]>
+</description>
+
+</plugin>
+
+<triggers>
+	<trigger
+		enabled="n"
+		group="mentorTrigger"
+		match="^(?:\> )*(You say to .* 'I've taught you everything I know about '.*'\.'|You say to .* 'You can't learn anymore of '.*' here\.'|Learn it better before trying to teach\.|That's nothing you can teach\.)$"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			incrementSkill()
+			teachSkill()
+		</send>
+	</trigger>
+	<trigger
+		enabled="y"
+		match="^(.*) will teach the following:$"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			trainerName = "%1"
+			EnableTrigger ("trainTrigger", true)
+		</send>
+	</trigger>
+	<trigger
+		enabled="n"
+		match="^.*$"
+		name="trainTrigger"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+		script="loadTrainInfo"
+	>
+	</trigger>
+</triggers>
+
+<aliases>
+	<alias
+		match="^teach ([a-zA-Z]+) (barbarian|bard|hellion|mercenary|necromancer|paladin|priest|rogue|scout|shaman|sorcerer|swashbuckler|warlock|spoken|written) (spells|skills|songs|lyrics|languages)$"
+		enabled="y"
+		regexp="y"
+		send_to="12"
+		sequence="95"
+	>
+		<send>teachPerson("%1", "%2", "%3", "0", "0")</send>
+	</alias>
+	<alias
+		match="^teach ([a-zA-Z]+) (barbarian|bard|hellion|mercenary|necromancer|paladin|priest|rogue|scout|shaman|sorcerer|swashbuckler|warlock) (spells|skills) (barbarian|bard|hellion|mercenary|necromancer|paladin|priest|rogue|scout|shaman|sorcerer|swashbuckler|warlock)$"
+		enabled="y"
+		regexp="y"
+		send_to="12"
+		sequence="95"
+	>
+		<send>crossTeachPerson("%1", "%2", "%3", "%4")</send>
+	</alias>
+	<alias
+		match='^teach ([a-zA-Z]+) (barbarian|bard|hellion|mercenary|necromancer|paladin|priest|rogue|scout|shaman|sorcerer|swashbuckler|warlock) (spells|skills|songs|lyrics) (?:\&apos;|\&quot;|)([a-zA-Z\s]+)(?:\&apos;|\&quot;|) to (?:\&apos;|\&quot;|)([a-zA-Z\s]+)(?:\&apos;|\&quot;|)$'
+		enabled="y"
+		regexp="y"
+		send_to="12"
+		sequence="90"
+	>
+		<send>teachPerson("%1", "%2", "%3", "%4", "%5")</send>
+	</alias>
+	<alias
+		match="^teach skip$"
+		enabled="y"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			if not (indexStart == 0 or indexEnd == 0) then
+				ColourNote("orange", "black", "Mentor: Ability skipped")
+				incrementSkill()
+				teachSkill()
+			else
+				ColourNote("orange", "black", "Mentor: Nothing to skip")
+			end
+		</send>
+	</alias>
+	<alias
+		match="^teach stop$"
+		enabled="y"
+		regexp="y"
+		send_to="12"
+		sequence="100"
+	>
+		<send>
+			ColourNote("orange", "black", "Mentor: Stopped")
+			clearTeach()
+		</send>
+	</alias>
+</aliases>
+
+<script>
+<![CDATA[
+http = require "socket.http" 
+socket = require "socket"
+
+trainerName = ""
+trainerInfo = ""
+trainerColor = ""
+
+selectedArray = {}
+indexStart = 0
+indexEnd = 0
+person = ""
+class = ""
+ability = ""
+
+abilities = { 
+	languages = {
+		spoken = {
+			"taslamaran tongue", "uxmaln tongue", "zhensh tongue", "empire tongue", "aghelian tongue", "sylvan tongue", "firmyrn tongue", "deep tongue"},
+		written = {
+			"taslamaran writing", "uxmaln writing", "zhensh writing", "empire writing", "aghelian writing", "sylvan writing", "firmyrn writing", "deep writing"}
+	},
+	skills = {
+		barbarian = {
+			"spear", "axe", "dagger", "flail", "mace", "polearm", "sling", "staff", "sword", "whip", "bash", "enhanced damage", "parry", "swim", "dirt kicking", "self defense", "second attack", "fast healing", "berserk", "brawling", "shield block", "alertness", "rescue", "suppression", "third attack", "blind fighting", "butcher"},
+		bard = {
+			"dagger", "sling", "staff", "sword", "whip", "dance", "swim", "dodge", "trip", "haggle", "sneak", "juggle", "dirt kicking", "tumbling", "second attack", "pick lock", "streetwise", "crossbow", "parry", "self defense", "endurance"},
+		hellion = {
+			"spear", "axe", "dagger", "flail", "mace", "polearm", "sword", "shield block", "sling", "swim", "parry", "second attack", "hide", "sneak", "combat casting", "self defense", "enhanced damage", "endurance", "fast healing", "haggle"},
+		mercenary = {
+			"spear", "axe", "dagger", "flail", "mace", "polearm", "sling", "staff", "sword", "whip", "bash", "enhanced damage", "parry", "rescue", "shield block", "swim", "dirt kicking", "self defense", "second attack", "fast healing", "crossbow", "disarm", "kick", "retreat", "brawling", "dodge", "trip", "third attack"},
+		necromancer = {
+			"dagger", "sling", "staff", "scrolls", "staves", "swim", "wands", "meditation", "dodge", "self defense"},
+		paladin = {
+			"spear", "dagger", "flail", "mace", "polearm", "sword", "rescue", "shield block", "sling", "swim", "parry", "second attack", "combat casting", "self defense", "disarm", "enhanced damage"},
+		priest = {
+			"dagger", "flail", "mace", "sling", "staff", "scrolls", "staves", "swim", "crossbow", "self defense"},
+		rogue = {
+			"dagger", "mace", "sword", "whip", "backstab", "dodge", "trip", "haggle", "hide", "peek", "sling", "swim", "dirt kicking", "pick lock", "sneak", "steal", "parry", "shield block", "second attack", "climb", "disguise", "crossbow", "circle stab", "fast healing", "streetwise"},
+		scout = {
+			"spear", "axe", "bow", "dagger", "staff", "sword", "whip", "dirt kicking", "dodge", "fletch", "swim", "butcher", "endurance", "sneak", "tame", "shield block", "second attack", "camouflage", "herbalism", "parry", "rescue", "self defense", "skin"},
+		shaman = {
+			"axe", "dagger", "flail", "mace", "staff", "staves", "swim", "meditation", "self defense", "dodge", "endurance"},
+		sorcerer = {
+			"dagger", "sling", "staff", "dodge", "scrolls", "staves", "swim", "wands", "meditation", "crossbow"},
+		swashbuckler = {
+			"dagger", "sling", "sword", "dirt kicking", "dodge", "dual wield", "parry", "swim", "heckle", "self defense", "juggle", "sneak", "trip", "fast healing", "haggle", "crossbow", "brawling", "kick", "second attack"},
+		warlock = {
+			"dagger", "flail", "mace", "staff", "staves", "wands", "swim", "dodge", "self defense", "meditation", "endurance"}
+	},
+	songs = {
+		bard = {
+			"songs of protection", "songs of war", "c major", "songs of healing", "songs of death", "f minor", "songs of antimagic"}
+	},
+	lyrics = {
+		bard = {
+			"Bind Me In Music's Safety", "Unaffected By Thy Hand", "Dark Shall Rule The Realms", "The Miner's Saint", "Oh, Guardians Of Old", "Fear Not The Flame", "Armor Of Song And Might", "Pointy Things", "From The Shadows", "To Live In Gloried Song", "Away! Away!", "Beat The Drums!", "Slash, Stab, Rend, Smash", "The Crash Of Battle", "Soldier Go", "We Have Need", "River, O River", "Truest Wealth", "Flesh And Bone", "All Yon Childe", "When Death Comes", "In That Solitude", "Mock Of Death", "Through The Night", "The Hammer Falls", "Shorten Their Time", "Tale of Jason Alavern", "Solemn Shade", "Playing With Fire", "Some Fool", "Magic's Fall", "Eldritch Blight", "Strange Happenstance", "Magical Negation", "Raise No Voice", "The Traveller's Song", "A Curse To Rhythm", "When Songs Do Battle", "The Arrogant Bard", "Lute Strings Snap", "Time To Dance", "Lift Your Feet", "Hi Dee Ho Di Hi Dee Hay", "The Madness Of Music", "Wee Lad Wiggun", "Dance Again Before The End", "Come, Oh Magic", "Yon Magical Twister", "Mystical Energies", "Mistress Magic", "Spells of Power", "Slow Moon Over Zhenshi", "The Soothesayer", "Relentless Sleep", "Peaceful Release", "This Idyllic Scene", "Powers Of Song", "Done Now Be", "Pyrathia's Palm", "Hush, Hush, Hush", "With But A Word", "Silence Surrounded", "Fall On Deaf Ears", "I Hear Widows Crying", "Of Chattering Sparrows", "In A Quiet Library", "All Is Quiet"}
+	},
+	spells = {
+		barbarian = {},
+		bard = {},
+		hellion = {
+			"cause light", "curse", "blindness", "chill touch", "deafness", "detect invis", "cause serious", "detect hidden", "invis", "poison", "identify", "protection", "weaken", "holy symbol"},
+		mercenary = {},
+		necromancer = {
+			"armor", "cause light", "death shroud", "detect magic", "blindness", "chill touch", "continual light", "deafness", "detect hidden", "detect invis", "animate dead", "cause serious", "fly", "identify", "sleep", "weaken", "curse", "infravision", "poison", "shield", "slow", "teleport"},
+		paladin = {
+			"armor", "bless", "cure light", "refresh", "call armor", "create water", "cure blindness", "cure deafness", "cure disease", "detect invis", "cure serious", "flamestrike", "frenzy", "identify", "create food", "know alignment", "protection", "remove curse", "holy symbol"},
+		priest = {
+			"armor", "bless", "continual light", "cure light", "detect magic", "refresh", "create water", "cure blindness", "cure deafness", "detect poison", "frenzy", "holy symbol", "protection", "cure serious", "identify", "magical vestment", "spirit sight", "cancellation", "create food", "cure poison", "know alignment", "regeneration", "remove curse"},
+		rogue = {},
+		scout = {},
+		shaman = {
+			"armor", "bless", "cure light", "refresh", "create water", "cure blindness", "cure deafness", "spirit doll", "slow", "water breathing", "blindness", "cure serious", "deafness", "identify", "sleep", "spirit sight", "create food", "cure poison", "curse", "infravision", "regeneration", "remove curse"},
+		sorcerer = {
+			"armor", "change sex", "detect buried", "detect magic", "magic missile", "ventriloquate", "color spray", "continual light", "detect hidden", "detect invis", "fly", "invis", "enlarge", "giant strength", "identify", "infravision", "shrink", "sleep", "acid blast", "cancellation", "mirror image", "shield", "teleport", "understand"},
+		swashbuckler = {},
+		warlock = {
+			"create spring", "detect buried", "faerie fire", "healing rays", "shocking grasp", "continual light", "detect hidden", "detect invis", "detect poison", "fly", "burning hands", "dig", "infravision", "invis", "water breathing", "control weather", "cure poison", "lightning bolt", "resist elements"}
+	}
+}
+
+function getSKColor(colorCode)
+	skColors = {
+		black = "$0",
+		blue = "$1",
+		green = "$2",
+		cyan = "$3",
+		red = "$4",
+		magenta = "$5",
+		brown = "$6",
+		lightgray = "$7",
+		darkgray= "$0$I",
+		brightblue = "$1$I",
+		brightgreen = "$2$I",
+		brightcyan = "$3$I",
+		brightred = "$4$I",
+		brightmagenta = "$5$I",
+		yellow = "$6$I",
+		white = "$7$I"}
+
+	clientColors = {
+		black = GetNormalColour(1), 
+		blue = GetNormalColour(5),
+		green = GetNormalColour(3),
+		cyan = GetNormalColour(7),
+		red = GetNormalColour(2),
+		magenta = GetNormalColour(6),
+		brown = GetNormalColour(4),
+		lightgray = GetNormalColour(8),
+		darkgray= GetBoldColour(1),
+		brightblue = GetBoldColour(5),
+		brightgreen = GetBoldColour(3),
+		brightcyan = GetBoldColour(7),
+		brightred = GetBoldColour(2),
+		brightmagenta = GetBoldColour(6),
+		yellow = GetBoldColour(4),
+		white = GetBoldColour(8)}
+	
+	matchedColor = "lightgray"
+	for color, code in pairs(clientColors) do
+		if code == colorCode then
+			matchedColor = color
+			break
+		end
+	end
+	
+	return skColors[matchedColor]
+end
+
+function loadTrainInfo(name, line, wildcards, styles)
+	if line == "" then
+		EnableTrigger ("trainTrigger", false)
+		tempTrainerName = trainerName
+		tempTrainerInfo = trainerInfo
+		if trainerColor == "$1$I" then
+			uploadTrainerInfo(tempTrainerName, tempTrainerInfo)
+		end
+		trainerColor = ""
+		trainerName = ""
+		trainerInfo = ""
+	else 
+		trainerColor = getSKColor(styles[1].textcolour)
+		trainerInfo = trainerInfo .. line .. "\r\n"
+	end
+end
+
+function urlencode (s)
+	return (string.gsub (s, "%W", 
+		function (str)
+			return string.format ("%%%02X", string.byte (str))
+		end))
+end
+
+function fixrequest (req)
+	local t = { }
+	for k, v in pairs (req) do
+		table.insert (t, urlencode(k) .. '=' .. urlencode(v))
+	end
+	return table.concat (t, "&")
+end
+
+function uploadTrainerInfo(tName, tInfo)
+	request_body = fixrequest {ac = "ut", trainer_name = tName, trainer_ability = tInfo}
+	response_body = {}
+	socket.http.request {
+		url = "http://shattered-kingdoms-302711.ue.r.appspot.com/",
+		method = "POST",
+		headers = {
+			["Content-Length"] = string.len(request_body),
+			["Content-Type"] =  "application/x-www-form-urlencoded"}, 
+		source = ltn12.source.string(request_body),
+		sink = ltn12.sink.table(response_body)
+	}
+end
+	
+function teachPerson(personName, profession, type, fromSpell, toSpell)
+	clearTeach()
+	EnableTriggerGroup ("mentorTrigger", true)
+	if abilities[type][profession] then
+		selectedArray = abilities[type][profession]
+		if fromSpell == "0" and toSpell == "0" then
+			indexStart = 1
+			indexEnd = #selectedArray
+		else
+			for i, j in ipairs(selectedArray) do
+				if j == string.lower(fromSpell) then
+					indexStart = i
+				end
+				if j == string.lower(toSpell) then
+					indexEnd = i
+				end
+			end
+		end
+	end
+	if not (indexStart == 0 or indexEnd == 0) then
+		class = profession
+		person = personName
+		ability = type
+		teachSkill()
+	else
+		clearTeach()
+	end
+end
+
+function incrementSkill()
+	indexStart = indexStart + 1
+end
+
+function teachSkill()
+	if not (indexStart > indexEnd) then
+		--Note('teach' .. ' ' .. person .. ' "' .. selectedArray[indexStart] .. '" 0')
+		Send('teach' .. ' ' .. person .. ' "' .. selectedArray[indexStart] .. '" 0')
+	else
+		ColourNote("orange", "black", "Mentor: Completed")
+		clearTeach()
+	end
+end
+
+function clearTeach()
+	EnableTriggerGroup ("mentorTrigger", false)
+	selectedArray = {}
+	indexStart = 0
+	indexEnd = 0
+	person = ""
+end
+
+function crossTeachPerson(personName, profession, type, personProfession)
+	clearTeach()
+	EnableTriggerGroup ("mentorTrigger", true)
+	personAbilities = abilities[type][personProfession]
+	teachAbilities = abilities[type][profession]
+	commonAbilities = {}
+	for i, j in ipairs(personAbilities) do
+		for k, l in ipairs(teachAbilities) do
+			if j == l then
+				table.insert(commonAbilities, j)
+			end
+		end
+	end
+	selectedArray = commonAbilities
+	indexStart = 1
+	indexEnd = #commonAbilities
+	person = personName
+	teachSkill()
+end
+
+
+]]>
+</script>
+</muclient>

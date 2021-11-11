@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<muclient>
+<plugin
+   name="SK_Recharge_Counter"
+   author="Aello"
+   id="11111111111111111111111E"
+   language="Lua"
+   purpose="Keeps track of how charges on stave"
+   date_written="2018-05-12 10:45:35"
+   requires="4.94"
+   version="1.0"
+   >
+<description trim="y">
+<![CDATA[
+Displays a counter for each time you enchant
+
+Will automatically recognize when your enchanting something
+
+type reset alias to reset the counter manually
+]]>
+</description>
+
+</plugin>
+
+<!--  Triggers  -->
+
+<triggers>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="You utter the words, 'candusqpabraoz'.\nYou recharge ([a-zA-Z\s\'\-]+)!$"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>rechargeCounter = GetVariable("rechargeCounter") or 0
+status = GetVariable("rechargeStatus") or 0
+item = GetVariable("rechargedItem") or ""
+rechargedItem = "%1"
+if rechargedItem ~= item and tonumber(status) == 0 then
+   rechargeCounter = 0
+end
+rechargeCounter = rechargeCounter + 1
+Note ("Recharge Succeeded: " .. rechargeCounter .. " charges")
+SetVariable("rechargeCounter", rechargeCounter)
+SetVariable("rechargedItem", rechargedItem)
+if status == "1" then
+   Execute ("recharge run")
+end</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   lines_to_match="2"
+   match="You utter the words, 'candusqpabraoz'.\nYou make a mistake and magical energy leaks from ([a-zA-Z\s\']+).$"
+   multi_line="y"
+   regexp="y"
+   send_to="12"
+  >
+  <send>rechargeCounter = GetVariable("rechargeCounter") or 0
+status = GetVariable("rechargeStatus") or 0
+item = GetVariable("rechargedItem") or ""
+rechargedItem = "%1"
+if rechargedItem ~= item and tonumber(status) == 0 then
+   rechargeCounter = 0
+end
+if tonumber(rechargeCounter) > 0 then
+   rechargeCounter = rechargeCounter - 1
+end
+Note ("Recharge Failed: " .. rechargeCounter .. " charges")
+SetVariable("rechargeCounter", rechargeCounter)
+SetVariable("rechargedItem", rechargedItem)
+if status == "1" then
+   Execute ("recharge run")
+end</send>
+  </trigger>
+</triggers>
+
+<aliases>
+  <alias
+   match="^recharge run$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>rechargeCounter = GetVariable("rechargeCounter") or 0
+rechargeLimit = GetVariable("rechargeLimit") or 0
+status = GetVariable("rechargeStatus") or 0
+item = GetVariable("rechargeItem") or ""
+
+if tonumber(status) == 1 and tonumber(rechargeCounter) &lt; tonumber(rechargeLimit) then
+   Send("c recharge " .. item)
+else
+   Note ("Auto Recharge Script Ended")
+   Execute("recharge off")
+end</send>
+  </alias>
+  
+  <alias
+   match="^recharge ([a-zA-Z0-9\.]+) ([0-9]+) ([0-9]+)$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send> 
+   Note ("Auto Recharge On: %1 %2 %3")
+   SetVariable("rechargeStatus", 1)
+   SetVariable("rechargeItem", "%1")
+   SetVariable("rechargeCounter", %2)
+   SetVariable("rechargeLimit", %3)
+   Execute ("recharge run")</send>
+  </alias>
+  <alias
+   match="^recharge off"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+   Note("Recharge Off/Cleared")
+   SetVariable("rechargeStatus", 0)
+   SetVariable("rechargeCounter", 0)</send>
+  </alias>
+  
+</aliases>
+
+</muclient>
